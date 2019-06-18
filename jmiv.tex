@@ -1,0 +1,555 @@
+% This is samplepaper.tex, a sample chapter demonstrating the
+% LLNCS macro package for Springer Computer Science proceedings;
+% Version 2.20 of 2017/10/04
+%
+\documentclass[runningheads]{llncs}
+%
+\usepackage{graphicx,subfig}
+\usepackage{amstext,amsmath,amssymb,bm,bbm,mathtools}
+\usepackage[linesnumbered,lined,boxed,commentsnumbered]{algorithm2e}
+\usepackage[export]{adjustbox}
+\usepackage{xcolor}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+
+\newcommand{\todo}[1]{{\textcolor{blue}{#1}}}
+\newcommand{\test}[1]{{\textcolor{red}{#1}}}
+
+% Used for displaying a sample figure. If possible, figure files should
+% be included in EPS format.
+%
+% If you use the hyperref package, please uncomment the following line
+% to display URLs in blue roman font according to Springer's eBook style:
+% \renewcommand\UrlFont{\color{blue}\rmfamily}
+
+\begin{document}
+%
+\title{Digital Curvature Evolution Models for Image Segmentation\thanks{This  work has  been  partially  funded by CoMeDiC ANR-15-CE40-0006 research grant.}}
+
+\author{Daniel Antunes\inst{1}
+Jacques-Olivier Lachaud\inst{1}
+Hugues Talbot\inst{2}}
+%
+\authorrunning{D. Antunes et al.}
+% First names are abbreviated in the running head.
+% If there are more than two authors, 'et al.' is used.
+%
+\institute{Universit{\'e} Savoie Mont Blanc, LAMA, UMR CNRS 5127, F-73376, France
+\email{daniel.martins-antunes, jacques-olivier.lachaud@univ-savoie.fr} \and
+CentraleSupelec Inria \'equipe OPIS, Universit\'e Paris-Saclay, 9 rue Joliot-Curie, F-91190 Gif-sur-Yvette \\
+\email{hugues.talbot@centralesupelec.fr}}
+%
+\maketitle              % typeset the header of the contribution
+%
+\begin{abstract}
+
+ 
+\keywords{Multigrid convergence  \and Digital estimator \and Curvature \and Shape Optimization \and Image Segmentation.}
+\end{abstract}
+%
+%
+%
+\setcounter{footnote}{0}
+\section{Introduction \todo{(To be extended)}}
+\begin{itemize}
+	\item{Geometric properties and regularization}
+	\item{The role of curvature} 
+	
+	Quote \cite{schoenemann2011elastic} for the interest of using curvature energy when segmenting regions in gradient-based data fitting term. It can look for global optimum within a graph representation of the image. Main problem of their approach is the computational complexity as well as rather coarse approximations of curvature. (Be more precise here).
+	
+	\item{What are the difficulties in use curvatue as a regularizer (point out convex relaxation approaches) and how a digital approach may help us }
+	\item{Outline: We present two models that illustrate how digital estimators can be used to minimize the elastica energy on digital sets.  }
+	\item{\todo{Add related works : geometric priors, binary segmentation, other digital curve evolution models}}
+	\item{\todo{Talk about Willmore flow with phase field or with threshold dynamics}}
+\end{itemize}
+
+\section{Multigrid convergent estimators \todo{(Mostly copy/paste)}}
+The goal of this section is to  introduce the concept of multigrid convergent and its interest in the analysis of digital images.
+\begin{itemize}
+	\item{Why to use multigrid convergent estimators}
+	\item{Multigrid convergence for local estimators}
+	\item{Reference to examples of multigrid digital estimators(for curvature, length, tangent)}
+	\item{Define the elastica energy estimator}
+	\item{\test{(Jaco) see if two opposite II evaluations give convergent curvature}}
+\end{itemize}
+
+\hrulefill
+
+A digital image is the result of some quantization process over an object $X$ lying in some continuous space of
+dimension $2$ (here).  For example, the Gauss digitization of $X$ with grid step $h>0$ is defined as
+\begin{align*}
+	D_h(X) = X \cap (h\mathbb{Z})^2.
+\end{align*} 
+
+Given an object $X$ and its digitization $D_h(X)$, a digital estimator $\hat{u}$ for some geometric quantity $u$ is
+intended to compute $u(X)$ by using only the digitization. This problem is not well-posed, as the same digital object
+could be the digitization of infinitely many objects very different from $X$. Therefore, a characterization of what constitutes
+a good estimator is necessary.
+
+Let $u$ be some geometric quantity of $X$ (e.g. tangent, curvature). We wish to devise a digital estimator $\hat{u}$ for
+$u$. It is reasonable to state that $\hat{u}$ is a good estimator if $\hat{u}(D_h(X))$ converges to $u(X)$ as we refine
+our grid. For example, counting pixels is a convergent estimator for area (with a rescale of $h^2$); but counting
+boundary pixels (with a rescale of $h$) is not a convergent estimator for perimeter. Multigrid convergence is the
+mathematical tool that makes this definition precise. Given any subset $Z$ of $(h\mathbb{Z})^2$, we can represent it as a
+union of axis-aligned squares with edge length $h$ centered on the point of $Z$. The topological boundary of this union
+of cubes is called {\em $h$-frontier} of $Z$. When $Z=D_h(X)$, we call it {\em $h$-boundary of $X$} and denote it by
+$\partial_h X$.
+%% In the following, let the $h$-frontier of $D_h(X)$ to be defined as $\partial D_h(X) = \partial \left( \frac{1}{h} \cdot X \right) \cap \mathbb{Z}^2$.
+
+\begin{definition}[Multigrid convergence for local geometric quantites]
+  A local discrete geometric estimator $\hat{u}$ of some geometric
+  quantity $u$ is (uniformly) multigrid convergent for the family $\mathbb{X}$ if
+  and only if, for any $X \in \mathbb{X}$, there exists a grid step
+  $h_X>0$ such that the estimate $\hat{u}(D_h(X),\hat{x},h)$ is
+  defined for all $\hat{x} \in \partial_hX$ with $ 0 < h < h_X$, and
+  for any $x \in \partial X$,
+  \begin{equation*}
+    \forall \hat{x} \in  \partial_hX \text{ with } \norm{ \hat{x} - x }_{\infty} \leq h, \norm{ \hat{u}(D_h(X),\hat{x},h) - u(X,x)} \leq \tau_{X}(h),			
+  \end{equation*}
+  where $\tau_{X}:\mathbb{R}^{+}\setminus\{0\} \rightarrow
+  \mathbb{R}^{+}$ has null limit at $0$. This function defines the
+  speed of convergence of $\hat{u}$ towards $u$ for $X$.
+\end{definition}
+	
+For a global geometric quantity (e.g. perimeter, area, volume), the definition remains the same, except that the mapping
+between $\partial X$ and $\partial_h X$ is no longer necessary.
+	
+Multigrid convergent estimators provide a quality guaranty and should be preferred over non-multigrid convergent
+ones. In the next section, we describe two estimators that are important for our purpose.
+
+\subsection{Tangent and Perimeter Estimators}
+
+The literature presents several perimeter estimators that are multigrid convergent (see
+\cite{coeurjolly04,coeurjolly12} for a review), but in order to define the digital elastica we need a local estimation
+of length and we wish that integration over these local length elements gives a multigrid convergent estimator for the
+perimeter.
+
+\begin{definition}[Elementary Length]
+  Let a digital curve $C$ be represented as a sequence of grid vertices in a grid cell representation of digital objects (in grid with step $h$). Further, let $\hat{\theta}$ be a multigrid convergent estimator for tangent. The elementary length $\hat{s}(e)$ at some grid edge $e\in C$ is defined as
+  \begin{align*}
+    \hat{s}(e) = h \cdot \hat{\theta}(l) \cdot or(e),
+  \end{align*}
+  where $or(e)$ denotes the grid edge orientation.
+\end{definition}
+The integration of the elementary length along the digital curve is a multigrid convergent estimator for perimeter if
+one uses the $\lambda$-MST \cite{lachaud07} tangent estimator (see \cite{lachaud06}).
+
+\subsection{Integral Invariant Curvature Estimator}
+Generally, an invariant $\sigma$ is a real-valued function from some space $\Omega$ which value is unaffected by the action
+of some group $\mathfrak{G}$ on the elements of the domain
+\begin{align*}
+  x \in \Omega, g \in \mathfrak{G}, \sigma(x) = v \longleftrightarrow \sigma(g \cdot x ) = v.
+\end{align*}
+Perimeter and curvature are examples of invariants for shapes on $\mathbb{R}^2$ with respect to the euclidean group
+(rigid transformations). Definition of integral area invariant and its one-to-one correspondence with curvature is
+proven in \cite{manay04}.
+
+
+\begin{definition}[Integral area invariant]
+  Let $X \subset \mathbb{R}^2$ and $B_r(p)$ the ball of radius $r$ centered at point $p$. Further, let
+  $\mathbbm{1}_X(\cdot)$ be the characteristic function of $X$. The integral area invariant $\sigma_{X,r}(\cdot)$ is
+  defined as
+  \begin{align*}
+    \forall p \in \partial X, \quad \sigma_{X,r}(p) = \int_{B_r(p)}{ \mathbbm{1}_X(x) dx}.
+  \end{align*}
+\end{definition}
+
+
+The value $\sigma_{X,r}(p)$ is the intersection area of ball $B_r(p)$ with shape $X$. By locally approximating the shape
+at point $p \in X$, one can rewrite the intersection area $\sigma_{X,r}(p)$ in the form of the Taylor expansion
+\cite{pottman09}
+	
+\begin{align*}
+  \sigma_{X,r}(p) = \frac{\pi}{2}r^2 - \frac{\kappa(X,p)}{3}r^3 + O(r^4),
+\end{align*}
+		
+where $\kappa(X,p)$ is the curvature of $X$ at point $p$. By isolating $\kappa$ we can define a curvature estimator
+	
+\begin{align}
+  \tilde{\kappa}(p) \coloneqq \frac{3}{r^3}\left( \frac{\pi r^2}{2} - \sigma_{X,r}(p) \right),
+  \label{eq:curvature_approximation}
+\end{align}
+	
+Such an approximation is convenient as one can simply devise a multigrid convergent estimator for the area.
+
+\begin{definition}	
+  Given a digital shape $D \subset (h \mathbb{Z})^2$, a multigrid convergent estimator for the area $\widehat{Area}(D,h)$ is defined as	
+		
+  \begin{align}
+    \widehat{Area}(D,h) \coloneqq h^2\text{Card}\left( D \right).	
+    \label{eq:digital_estimator_area}
+  \end{align}
+\end{definition}
+	
+In \cite{coeurjolly13}, the authors combine the approximation\eqref{eq:curvature_approximation} and digital estimator
+\eqref{eq:digital_estimator_area} to define a multigrid convergent estimator for the curvature.
+
+\begin{definition}[Integral Invariant Curvature Estimator]
+  Let $D \subset (h \mathbb{Z})^2$ a digital shape. The integral invariant curvature estimator is defined as
+  \begin{align*}
+    \hat{\kappa}_{r}(D,x,h) \coloneqq \frac{3}{r^3} \left( \frac{\pi r^2}{2} - \widehat{Area} \left( B_{r} ( x ) \cap D, h \right) \right).
+    %% \hat{\kappa}_{r}(D,x,h) \coloneqq \frac{3}{r^3} \left( \frac{\pi r^2}{2} - \widehat{Area} \left( B_{r/h} ( \frac{1}{h} \cdot x ) \cap D, h \right) \right).
+  \end{align*}
+\end{definition}
+
+
+This estimator is robust to noise and can be extended to estimate the mean curvature of three dimensional shapes.
+
+\subsection{Elastica energy estimator}
+
+In the remaining of this paper we are going to be interested in the minimization of the elastica energy. Given an euclidean shape $X$, the elastica is defined as
+
+\begin{align*}
+  E(X) = \int_{\partial X}{(\alpha + \beta \kappa^2) ds}, \quad \text{for~} \alpha \ge 0, \beta \ge 0.
+\end{align*}
+
+We are going to use the digital version of the energy, using multigrid convergent estimators. The energy, in this case, is also multigrid convergent.
+
+
+\begin{align}
+	\hat{E}( D_h(X) ) = \sum_{x \in \partial D_h(X)}{ \hat{s}(x)\left(\; \alpha + \beta \hat{\kappa}_{r}^2(D_h(X),x,h) \; \right)}.
+	\label{eq:digital-energy}
+\end{align}
+ In the following we omit the grid step $h$ to simplify expressions (or, putting it differently, we assume that $X$ is rescaled by $1/h$ and we set $h=1$).
+
+\section{Local combinatorial optimization \todo{(To be written, code is done)}}
+    The goal of this section is to exemplify the use of digital estimator in optimization scheme in a simple
+    local search algorithm.
+\begin{itemize}
+	\item{Simple optimization scheme for elastica energy using the II estimator;}
+	\item{Define the local search neighborhood;}
+    \item{Describe process;}	
+    \item{Discussion: Show some results; }	
+\end{itemize}
+
+\hrulefill
+
+In this section we present a process that, given a digital shape $S_0$, generates a sequence $(S_i)$ of shapes with non-increasing elastica energy. The idea is to define a neighborhood $\mathcal{N}_i$ of $S_i$ and choose the element of $\mathcal{N}_i$ with lowest energy.  The process is suited for the integral invariant but also other curvature estimators, for example, MDCA \cite{roussillon11}.
+
+Let $S$ a $2$-dimensional digital shape. We adopt the cellular-grid model to represent $S$, i.e., pixels and its lower dimensional counterparts, linels and pointels, are part of $S$. In particular, we denote by $\partial S$ the topological boundary of $S$, i.e., the connected sequence of linels such that for each linel we have one of its incident pixels in $S$ and the other not in $S$.
+
+
+Let $d_{S}:\Omega \rightarrow \mathcal{R}$ be the euclidean distance transformation with respect to shape $S$. The value $d_S(x)$ gives the euclidean distance between $x$ and the closest background pixel in $\Omega$. 
+
+\begin{definition}[m-Ring Set]
+Given a digital shape $S\in\Omega$, its distance transformation $d_S$ and natural numbers $m,r > 0$, we define its $m$-ring set as
+
+\begin{align*}
+	\quad R_m(S) = \left\{ x \in \Omega \; | \; 0 < d_S(x) \leq m \right\} \; \cup \;  \left\{ x \in \Omega \; | \; 	0 < d_{\overline{S}}(x) \leq m \right\}\\
+\end{align*}
+
+\end{definition}
+
+Consider the following neighbor set candidate
+
+\begin{align*}
+\mathcal{U}(S) = \{ D \; | D \subset R_1(S) \cup S \; and \; \text{D is connected} \}
+\end{align*}
+
+
+Such set can be extremely large and its complete exhaustion is prohibitively expensive.  Instead, we explore a subset of it with the help of $(n)$-glued curves.
+
+An oriented closed curve $C$ is a sequence of linels, but it can also be seen as a sequence of pointels. In particular, the first pointel is also the last one. We write $p < q$ to denote that a pointel $p$ comes first than $q$ in some curve.
+
+
+\begin{definition}[$n$-Glued Curve]
+Given oriented and closed curves $C_1,C_2$ its set of $n$-glued curves is defined as
+
+\begin{align*}
+	\mathcal{G}_n(C_1,C_2) = \{ g=(a,p,q,b) \; | \; a,b \in C_1, \, p,q \in C_2, \, a<b, \, q-p=n \},
+\end{align*}
+
+
+\end{definition}
+
+It is easy to check that any two glued curves $g_1,g_2$ can be combined as long as exists an orientation such that $a_2 > b_1$ and $b_2 < a_1$. We denote $\mathcal{G}_{n,k}(C_1,C_2)$  the set of all $k$-combined $n$-glued curves. Finally, we define
+
+\begin{align*}
+	\mathcal{G}(C_1,C_2) = \bigcup_{n,k}{\mathcal{G}_{n,k}(C_1,C_2) }
+\end{align*}
+
+
+The parameters $n,k$ are used to parameterize the neighborhood set.
+
+\begin{align*}
+	\mathcal{N}(S,N,k) = \bigcup_{1 \leq n \leq N} \mathcal{G}_{n,k}(\partial S, S_I) \cup \mathcal{G}_{n,k}(\partial S, S_O)
+\end{align*}
+
+ Algorithm \ref{alg:local-search} describes the local combinatorial process and figures \ref{fig:local-comb-square-results} presents the results of executing the algoritmh for different shapes with $k=1$ and $n<20$.
+
+
+\begin{algorithm}[H]
+ \SetKwData{It}{i}
+ \SetKwData{MIt}{maxIt}
+ \SetKwData{Tol}{tolerance}
+ \SetKwData{Delta}{delta}
+ \SetKwData{CurValue}{v} 
+ \SetKwData{Best}{best} 
+ \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+ 
+ \Input{A digital set $S$; the number of jonctions $k$ to use; the maximum length of glued curves $n$; the maximum number of iterations \MIt; and a stop condition \Tol}
+ \BlankLine
+ \Delta $\longleftarrow$ \Tol+1\;
+ \CurValue $\longleftarrow$ $\hat{E}(S)$\;
+ \While{ \It $<$ \MIt \bf{and} \Delta $>$ \Tol  }{
+  	\For{$ X \in \mathcal{N}(S_i,n,k) $}
+	{
+		\If{ $\hat{E}(X)$ $<$ $\hat{E}(X^\star)$ }
+		{
+			$X^\star \longleftarrow X$
+		}
+	}
+	\It $\longleftarrow$ \It $+1$\;
+	$S_{i} \longleftarrow X^\star$\;
+	\Delta $\longleftarrow$ \CurValue - $\hat{E}(S_{i})$\;	
+	\CurValue $\longleftarrow$ $\hat{E}(S_{i})$\;
+ }
+ \label{alg:local-search} 
+ \caption{Local combinatorial optimization for elastica minimization.}
+\end{algorithm}
+
+		
+\begin{figure}[!ht]
+\center
+
+\begin{minipage}[b]{0.5\textwidth}
+\includegraphics[scale=0.3]{images/local_search/square/graph.eps}
+\end{minipage}
+\begin{minipage}[b]{0.45\textwidth}
+	\subfloat[\label{}]{%
+	\includegraphics[scale=0.125]{images/local_search/square/h1.0/summary_flow.eps}
+	}%
+	\hspace{10pt}
+	\subfloat[\label{}]{%
+	\includegraphics[scale=0.125]{images/local_search/square/h0.5/summary_flow.eps}
+	}%
+	\hspace{10pt}
+	\subfloat[\label{}]{%
+	\includegraphics[scale=0.125]{images/local_search/square/h1.0/summary_flow.eps}
+	}%
+	\hspace{10pt}
+	\subfloat[\label{}]{%
+	\includegraphics[scale=0.125]{images/local_search/square/h0.5/summary_flow.eps}
+	}%
+\end{minipage}		
+		\caption{Local combinatorial optimization process results for the square and flower shapes. Grid step $1.0$ in (a),(c) and $0.5$ in (b),(d).}	
+		\label{fig:local-comb-square-results}
+\end{figure}
+
+
+The running time of algorithm \ref{alg:local-search} is summarized in table (). Although its use in practical applications is limited, we demonstrate that digital estimators are effective in its measurements and the evolved flows behave as expected. We observe that is a complete digital approach, and we do not suffer from discretization and rounding problems, a common issue in continuous models. In the next section, we explore a more efficient approach.
+
+\section{Digital Curvature Flow \todo{(Partly done)}}
+
+\begin{itemize}
+	\item{Model formulation;}
+	\item{Levels interpretation;}
+    \item{Connection with II estimator;}	
+    \item{\todo{Add distance transform}}
+    \item{\todo{Clarify optimization band of width 1 for guaranteeing connectivity}}
+    \item{\todo{Clarify asymetry and inversion of optimization. Flat parts are too unstable so we locate alternatively places that are "too" convex and places that are too concave.}}
+    \item{\test{Try dilatation then apply curve evolution (shrink mode), then alternate. Perhaps propose bigger dilatation for a reconnexion model with wider gaps.}}
+\end{itemize}
+
+\hrulefill
+
+	Let $\Omega_C$ the collection of digital connected digital sets in $\Omega$. Given a digital shape $S$, we wish to evolve it into a shape $S^\star$ similar to $S$ but with lower digital elastica energy. We recall the digital curvature estimator definition
+	
+\begin{align}
+	\hat{\kappa}^2(y) &= c1\Big( c2 - \sum_{x_i \in B_r(y)}{x_i} \Big)^2, 
+	\label{eq:curvature-estimator-pixels}
+\end{align}
+
+where $c_1=3/r^6$ and $c_2=\pi r^2/2$. Let $X,Y$ be the set of pixels and linels, respectively, in $\Omega$. We define the following binary model
+		
+\begin{align}
+\text{Minimize}_{x,y} & \sum_{y}{c_1y \Big(c_2 - \sum_{x_i \in B_r(y)}{x_i}\Big)^2	 } \cdot s(y,Y) \nonumber + F(S,X_{=1} \cup Y_{=1}) \nonumber \\
+\text{subject to} & \nonumber \\
+& (X_{=1} \cup Y_{=1}) \in \Omega_C, \; x,y \in \{0,1\}
+\label{eq:general-binary-formulation}
+\end{align}
+	
+
+
+where $F$ is some measure of similarity, e.g. distance, between initial shape $S$ and candidate solution. Such term is needed, otherwise the uninteresting empty set would be the optimal solution.
+
+Formulation \eqref{eq:general-binary-formulation} is of order four, binary and non-convex. These properties makes it a hard optimization problem. We are going to explore an alternative energy, which is a simplification of the latter. In section (...) we comment our attempts in optimizing  other variations of \eqref{eq:general-binary-formulation}.
+
+\subsection{A first model}
+
+We note that the elastica can be decreased by attenuating non-flat regions. The idea is to evolve a flow $(S_i)$ where $S_{i+1}$ is derived from the minimization of the sum of the squared curvature at $S_i$. We exchange solving a fourth order energy to solve multiple second order problems. We still have to guarantee that solutions are connected. We handle this issue by limiting the optimization region to a subset of $\Omega$, namely the inner pixel boundary of  $S_i$.
+
+\begin{definition}[Inner pixel boundary]
+{
+Given a digital shape $S$ embedded in a domain $\Omega$, we define its inner pixel boundary set $O(S)$ as
+\begin{align*}
+	O(S) = \left\{ \: x \; | \; x \in S, |\mathcal{N}_4(x) \cap S|<4 \: \right\},
+\end{align*}
+where $\mathcal{N}_4(x)$ denotes the $4$-adjacent neighbor set of $x$ (without $x$).
+}
+\end{definition}
+
+In other words, each flow iteration decides which pixels in the inner boundary are to be removed and which are to be kept. To simplify notation, we denote the optimization region of $S_i$ as $O_i$. We define the foreground set $F_i = S_i \setminus O_i$.
+
+In order to be symmetric, the curvature at some linel $y$ is computed on along $R_m(S)$. We define $O_{r,i}(y) = O_i \cap B_r(y)$ and an analogous definition holds for $F_{r,i}(y)$. Expanding \eqref{eq:curvature-estimator-pixels}, we get 
+
+	\begin{align*}
+		\hat{\kappa}^2(y) &= c_1\Big( c_2 - \sum_{x_i \in B_r(y)} \big( {x_i} + |F_{r,i}(y)| \big) \Big)^2 \\
+		\hat{\kappa}_{r}^2(y) &= c_1 \cdot \Big( C + 2\left( |F_{r,i}(y)| - c_2 \right) \sum_{x_i \in O_{r,i}(y)}{x_i} + \sum_{x_i \in O_{r,i}(y)}{x_i^2} + \sum_{ \substack{x_i,x_j \in O_{r,i}(p) \\ i<j} }{2x_ix_j}  \Big),
+	\end{align*}
+	
+	where $C=c_2^2 - 2c_2 \cdot |F_{r,i}(y)| + |F_{r,i}(y)|^2$. We proceed by minimizing the sum of squared curvatures along the boundary of the current shape. By ignoring constants and multiplication factors and using the binary character of the variables, we define the following family of energies
+	
+	\begin{align*}
+		E_m(X,S) = \sum_{y \in R_m(S_i)}{ \Big( { (1/2+ |F_{r,i}(y)|-c_2) \cdot \sum_{x_i \in O_{r,i}(y)}{x_i} } + \sum_{ \substack{x_i,x_j \in O_{r,i}(y) \\ i<j} }{x_ix_j} \Big) }.
+	\end{align*}
+	
+	Each choice of $m$ generates a different flow, which is generaly described in algorithm \ref{alg:evolution-model}.
+
+
+
+\begin{algorithm}[H]
+ \SetKwData{It}{i}
+ \SetKwData{MIt}{maxIt}
+ \SetKwData{Delta}{delta}
+ \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+ \SetKwComment{comment}{//}{}
+ 
+ \Input{A digital set $S$; The ring number $m$; the maximum number of iterations \MIt;}
+ \BlankLine
+ $S_i \longleftarrow S$\;
+ \While{ \It $<$ \MIt  }{ 	
+	\comment{Expansion mode}
+	\If{ \It is odd }{	 
+	 	$Z_i \longleftarrow \argmin_Z E_m(Z,\overline{S_i})$\;
+ 		$S_{i} \longleftarrow F_i + \overline{Z_i}$\;
+ 		$S_{i} \longleftarrow \overline{S_i}$\;	 	
+ 	}
+	\comment{Shrinking mode} 	
+ 	\Else{	
+	 	$Z_i \longleftarrow \argmin_Z E_m(Z,S_i)$\; 	
+ 		$S_{i} \longleftarrow F_i + \overline{Z_i}$\;
+ 	}
+ 	
+	\It $\longleftarrow$ \It $+1$\;
+	
+ }
+ \label{alg:evolution-model} 
+ \caption{Digital curvature evolution model.}
+\end{algorithm}
+
+
+
+Recall that II estimates curvature by computing the difference between half of the estimation ball area and the intersection of such ball with the shape.  In particular, regions of positive curvature have fewer pixels in its intersection set than on its complement wrt the estimation ball. This implies that variables in such regions are labeled one, as the unbalance grows otherwise. We attenuate curvature if we shift the center of the estimation ball towards the interior of the shape, which means removing the labeled one pixels. That's why we take the complement of the optimization solution. 
+
+The same reasoning applies for non-convex parts. Indeed, concave regions are convex in the shape complement. In the expasion mode we apply the same reasoning on the image complement, and by doing this we are able to handle concavities. It is called expansion mode because the optimization region, in this case, is the outer pixel boundary of the original shape. 
+
+\begin{table}
+	\center
+	\begin{tabular}{c|c|c}
+		& Shrinking Mode & Expansion Mode\\
+		\hline
+		$\kappa \geq 0$ & Remove & Add\\
+		$\kappa < 0$ & Keep	& Keep
+	\end{tabular}
+	\caption{Summary of digital curvature evolution model. The curvature values are with respect the original image.}		
+	\label{tab:flow-summary}	
+\end{table}
+
+In figure \ref{fig:m1-square-flow} we see some results for algorithm \ref{alg:evolution-model} with $m=1,r=3$. We observe a global movement towards roundness, but with several artifacts. We minimize the effects of a jaggy boundary by including length penalization. Nonetheless, a higher estimation ball radius creates unstable shapes (see figure \ref{fig:m1-higher-ball-radius}). In fact, the estimator is very sensitive in regions of low squared curvature, and its precisely in those regions which spurious pixels are included.
+
+
+\begin{figure}[!ht]
+\center
+[\textbf{FIGURE}: Flow comparison with and without length penalization]
+\caption{The flow is very sensitive to the variations of the estimator, which are particularly important in regions of low squared curvature. The artifacts are reduced if we inject a length penalization term. }
+\label{fig:m1-square-flow}
+\end{figure}
+
+
+
+\begin{figure}[!ht]
+\center
+[\textbf{FIGURE}: Effect of estimation ball radius in the flow]
+\caption{The model creates more artifacts with higher values of estimation ball radius. }
+\label{fig:m1-higher-ball-radius}
+\end{figure}
+
+
+\subsection{A more stable model}
+
+In the previous section we notice that the algorithm produces shapes with many artifacts due to the sensitiveness of the estimator on regions of low squared curvature. We argue that, evaluating the estimation ball along farther ring sets we skip those sensitive areas and we focus the optimization process only on those regions of highest squared curvature value. 
+
+
+
+\begin{figure}[!ht]
+\center
+[\textbf{FIGURE}: Effects of farther rings computation in the flow.]
+\label{fig:mx-square-flow}
+\caption{By positioning the estimation ball on farther rings, we avoid artifacts creation. }
+\end{figure}
+
+In our experiments we observe that we recover better results by using $n=r$, where $r$ is the estimation ball radius. In plots () we observe that the elastica energy value decreases along the iterations.
+
+
+\begin{figure}[!ht]
+\center
+[\textbf{FIGURE}: Grid step and ball radius influence figure for different shapes.]
+\label{fig:mx-flow-gs-radius-effect}
+\caption{Effects of var. grid step and ball radius}
+\end{figure}
+
+\begin{figure}[!ht]
+\center
+[\textbf{TABLE}: Elastica energy evolution graph]
+\label{gif:mx-elastica-plots}
+\caption{Elastica computation along the iterations for different shapes. }
+\end{figure}
+
+
+
+\begin{figure}[!ht]
+\center
+[\textbf{FIGURE}: Effects of the flow filling holes; Effects of the flow in shape with different degrees of curvature.]
+\label{fig:mx-speed-variation-hole-filling}
+\caption{High curvature regions evolves faster than lower ones; Holes are filled by the model. }
+\end{figure}
+
+
+\subsection{Optimization method}
+
+\begin{itemize}
+	\item{The energy is nonsubmodular}
+	\item{QPBO label few pixels for small $n$, but label all pixels for $n=r$.}	
+\end{itemize}
+
+
+\section{Segmentation and comparison with state-of-the-art \todo{(To be done)}}
+
+\begin{itemize}
+    \item{Influence of terms as data fidelity and length; }
+	\item{\todo{Comparison with Schoenemman method for images in database XXX; }}
+	\item{\todo{Quantitative analysis}}
+	\item{\todo{Try on ISIC2018, skin lesions database}}
+\end{itemize}
+
+
+\section{Final remarks}
+
+\begin{itemize}
+    \item{Attempts on linear and convex formulations; }
+    \item{Handling of thin objects;  }
+\end{itemize}
+
+%
+% ---- Bibliography ----
+%
+% BibTeX users should specify bibliography style 'splncs04'.
+% References will then be sorted and formatted in the correct style.
+%
+\bibliographystyle{splncs04}
+\bibliography{jmiv}
+
+\end{document}
