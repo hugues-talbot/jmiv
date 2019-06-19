@@ -401,6 +401,8 @@ where $F$ is some measure of similarity, e.g. distance, between initial shape $S
 
 Formulation \eqref{eq:general-binary-formulation} is of order four, binary and non-convex. These properties make it a hard optimization problem. We are going to explore an alternative energy, which is a simplification of the \jaco{former}. In section (...) we comment our attempts in optimizing  other variations of \eqref{eq:general-binary-formulation}.
 
+\jaco{(I would illustrate your definitions and notations on a figure, stating precisely $S$, its inner boundary, its m-ring, the optimization variables... Are you indeed using the length estimator ? If not, remove it for simplifying the exposition)}
+
 \subsection{A first model}
 
 We note that the elastica can be decreased by attenuating non-flat regions. The idea is to evolve a flow $(S_i)$ where $S_{i+1}$ is derived from the minimization of the sum of the squared curvature at $S_i$. We exchange solving a fourth order energy to solve multiple second order problems. We still have to guarantee that solutions are connected. We handle this issue by limiting the optimization region to a subset of $\Omega$, namely the inner pixel boundary of  $S_i$.
