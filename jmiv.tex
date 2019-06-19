@@ -482,6 +482,25 @@ The same reasoning applies for non-convex parts. Indeed, concave regions are con
 	\label{tab:flow-summary}	
 \end{table}
 
+
+
+\begin{table}
+  \color{green!50!black}
+  (I would write a table like this:)
+  \center
+  \begin{tabular}{|c|c|c|c|c|c|} \hline
+    shrink mode &    $\kappa \gg 0$ & $\kappa > 0$ & $\kappa \approx 0$ & $\kappa < 0$ & $\kappa \ll 0$ \\ \hline
+    $Z$ & $x_k=1$ & $x_k \in \{0,1\}$ & $x_k=0$ & $x_k=0$ & $x_k=0$ \\ \hline
+    $S_{i+1} \leftarrow S_i \setminus Z$ & eroded & prob. eroded & unchanged & unchanged & unchanged \\ \hline \hline
+    expansion mode &    $\bar{\kappa} \gg 0$ & $\bar{\kappa} > 0$ & $\bar{\kappa} \approx 0$ & $\bar{\kappa} < 0$ & $\bar{\kappa} \ll 0$ \\ \hline
+    $\bar{Z}$ & $\bar{x}_k=1$ & $\bar{x}_k \in \{0,1\}$ & $\bar{x}_k=0$ & $\bar{x}_k=0$ & $\bar{x}_k=0$ \\ \hline
+    $S_{i+1} \leftarrow \overline{\bar{S}_i \setminus \bar{Z}}$ & dilated & prob. dilated & unchanged & unchanged & unchanged \\ \hline 
+  \end{tabular}
+  
+  Since the curvature is negated when reversing the curve (i.e. $\bar{kappa}=-\kappa$), this process can only shrink  convex parts in shrink mode and expand concave parts in expansion mode.
+\end{table}
+
+
 In figure \ref{fig:m1-square-flow} we see some results for algorithm \ref{alg:evolution-model} with $m=1,r=3$. We observe a global movement towards roundness, but with several artifacts. We minimize the effects of a jaggy boundary by including length penalization. Nonetheless, a higher estimation ball radius creates unstable shapes (see figure \ref{fig:m1-higher-ball-radius}). In fact, the estimator is very sensitive in regions of low squared curvature, and its precisely in those regions which spurious pixels are included.
 
 
