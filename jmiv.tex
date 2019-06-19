@@ -386,7 +386,7 @@ next section, we explore a more efficient approach.
 	\label{eq:curvature-estimator-pixels}
 \end{align}
 
-where $c_1=3/r^6$ and $c_2=\pi r^2/2$. Let $X,Y$ be the set of pixels and linels, respectively, in $\Omega$. We define the following binary model
+where $c_1=3/r^6$ and $c_2=\pi r^2/2$, \jaco{and $B_r(y)$ is a shorthand for the pixels of the shape $S$ at distance less or equal to $r$ from $y$}. Let $X,Y$ be the set of pixels and linels, respectively, in $\Omega$. We define the following binary model
 		
 \begin{align}
 \text{Minimize}_{x,y} & \sum_{y}{c_1y \Big(c_2 - \sum_{x_i \in B_r(y)}{x_i}\Big)^2	 } \cdot s(y,Y) \nonumber + F(S,X_{=1} \cup Y_{=1}) \nonumber \\
@@ -394,12 +394,12 @@ where $c_1=3/r^6$ and $c_2=\pi r^2/2$. Let $X,Y$ be the set of pixels and linels
 & (X_{=1} \cup Y_{=1}) \in \Omega_C, \; x,y \in \{0,1\}
 \label{eq:general-binary-formulation}
 \end{align}
-	
+\jaco{($s(y,Y)$ ? Do you mean $\hat{s}$ of section 2. If so, takes the same notation (only one parameter in section 2). Here for me it is unclear what is $B_r(y)$. Does it includes $S$ or $X_{=1}$ ? $x$ is also here probably a vector (since you have $x_i$) ).}
 
 
 where $F$ is some measure of similarity, e.g. distance, between initial shape $S$ and candidate solution. Such term is needed, otherwise the uninteresting empty set would be the optimal solution.
 
-Formulation \eqref{eq:general-binary-formulation} is of order four, binary and non-convex. These properties makes it a hard optimization problem. We are going to explore an alternative energy, which is a simplification of the latter. In section (...) we comment our attempts in optimizing  other variations of \eqref{eq:general-binary-formulation}.
+Formulation \eqref{eq:general-binary-formulation} is of order four, binary and non-convex. These properties make it a hard optimization problem. We are going to explore an alternative energy, which is a simplification of the \jaco{former}. In section (...) we comment our attempts in optimizing  other variations of \eqref{eq:general-binary-formulation}.
 
 \subsection{A first model}
 
