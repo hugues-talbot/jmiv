@@ -381,7 +381,7 @@ next section, we explore a more efficient approach.
 	\label{eq:curvature-estimator-pixels}
 \end{align}
 
-where $c_1=3/r^6$ and $c_2=\pi r^2/2$ \jaco{, and $B_r(y)$ is a shorthand for the pixels of the shape $S$ at distance less or equal to $r$ from $y$}. Let $X,Y$ be the set of pixels and linels, respectively, in $\Omega$. We define the following binary model
+where $c_1=3/r^6$ and $c_2=\pi r^2/2$. Let $X,Y$ be the set of pixels and linels, respectively, in $\Omega$. We define the following binary model
 		
 \begin{align}
 \text{Minimize}_{x,y} & \sum_{y}{c_1y \Big(c_2 - \sum_{x_i \in B_r(y)}{x_i}\Big)^2	 } + F(S,X_{=1} \cup Y_{=1}) \nonumber \\
@@ -389,7 +389,6 @@ where $c_1=3/r^6$ and $c_2=\pi r^2/2$ \jaco{, and $B_r(y)$ is a shorthand for th
 & (X_{=1} \cup Y_{=1}) \in \Omega_C, \; x,y \in \{0,1\}^\Omega
 \label{eq:general-binary-formulation}
 \end{align}
-\jaco{($s(y,Y)$ ? Do you mean $\hat{s}$ of section 2. If so, takes the same notation (only one parameter in section 2). Here for me it is unclear what is $B_r(y)$. Is it correct to assume that $B_r(y)$  includes $S$ or $X_{=1}$ in its definition ? $x$ is also here probably a vector (since you have $x_i$) ).}
 
 
 where $F$ is some measure of similarity, e.g. distance, between initial shape $S$ and candidate solution. Such term is needed, otherwise the uninteresting empty set would be the optimal solution.
@@ -470,13 +469,13 @@ The same reasoning applies for non-convex parts. Indeed, concave regions are con
 
 \begin{table}
   \center
-  \begin{tabular}{|c|c|c|c|c|c|} \hline
-    shrink mode &    $\kappa \gg 0$ & $\kappa > 0$ & $\kappa \approx 0$ & $\kappa < 0$ & $\kappa \ll 0$ \\ \hline
-    $Z$ & $x_k=1$ & $x_k \in \{0,1\}$ & $x_k=0$ & $x_k=0$ & $x_k=0$ \\ \hline
-    $S_{i+1} \leftarrow S_i \setminus Z$ & eroded & prob. eroded & unchanged & unchanged & unchanged \\ \hline \hline
-    expansion mode &    $\bar{\kappa} \gg 0$ & $\bar{\kappa} > 0$ & $\bar{\kappa} \approx 0$ & $\bar{\kappa} < 0$ & $\bar{\kappa} \ll 0$ \\ \hline
-    $\bar{Z}$ & $\bar{x}_k=1$ & $\bar{x}_k \in \{0,1\}$ & $\bar{x}_k=0$ & $\bar{x}_k=0$ & $\bar{x}_k=0$ \\ \hline
-    $S_{i+1} \leftarrow \overline{\bar{S}_i \setminus \bar{Z}}$ & dilated & prob. dilated & unchanged & unchanged & unchanged \\ \hline 
+  \begin{tabular}{|c|c|c|c|} \hline
+    shrink mode &    $\kappa \gg 0$ & $\kappa \geq 0$ &  $\kappa < 0$ \\ \hline
+    $Z$ & $x_k=1$ & $x_k \in \{0,1\}$ & $x_k=0$ \\ \hline
+    $S_{i+1} \leftarrow S_i \setminus Z$ & eroded & prob. eroded & unchanged  \\ \hline \hline
+    expansion mode &    $\bar{\kappa} \gg 0$ & $\bar{\kappa} \geq 0$ & $\bar{\kappa} < 0$ \\ \hline
+    $\bar{Z}$ & $\bar{x}_k=1$ & $\bar{x}_k \in \{0,1\}$ & $\bar{x}_k=0$ \\ \hline
+    $S_{i+1} \leftarrow \overline{\bar{S}_i \setminus \bar{Z}}$ & dilated & prob. dilated & unchanged \\ \hline 
   \end{tabular}
   
   \label{tab:flow-summary}	  
@@ -538,39 +537,12 @@ In the previous section we notice that the algorithm produces shapes with many a
 \caption{By positioning the estimation ball on farther rings, we minimize artifacts creation. }
 \end{figure}
 
-In our experiments we observe that we recover better results by using $m=r$, where $r$ is the estimation ball radius. In plots () we observe that the elastica energy value decreases along the iterations.
+In our experiments, the best results are obtained by executing algorithm \ref{alg:evolution-model} with $m=r$, where $r$ is the estimation ball radius. In plot \ref{fig:mx-elastica-plots} we observe how the elastica evolves along the iterations. If the radius is too large, the elastica increases starting from a critical point $p$. That's what happens for the triangle, in which the flow converges to a single point.
 
 
 \begin{figure}[!ht]
-\center
-
+\center				
 		\setcounter{subfigure}{-3}
-		\subfloat[$r=3,h=1.0$]{%
-		\subfloat{%
-		\includegraphics[scale=0.2]{images/flow/grid-radius-effect/triangle/r3-h1.0/summary_flow.eps}
-		}%
-		\hspace{15pt}
-		\subfloat{%
-		\includegraphics[scale=0.15]{images/flow/grid-radius-effect/square/r3-h1.0/summary_flow.eps}}%
-		\hspace{15pt}
-		\subfloat{%
-\includegraphics[scale=0.2]{images/flow/grid-radius-effect/flower/r3-h1.0/summary_flow.eps}}%
-		}
-		
-		\setcounter{subfigure}{-2}
-		\subfloat[$r=5,h=1.0$]{%
-		\subfloat{%
-		\includegraphics[scale=0.2]{images/flow/grid-radius-effect/triangle/r5-h1.0/summary_flow.eps}
-		}%
-		\hspace{15pt}
-		\subfloat{%
-		\includegraphics[scale=0.15]{images/flow/grid-radius-effect/square/r5-h1.0/summary_flow.eps}}%
-		\hspace{15pt}
-		\subfloat{%
-\includegraphics[scale=0.2]{images/flow/grid-radius-effect/flower/r5-h1.0/summary_flow.eps}}%
-		}					
-		
-		\setcounter{subfigure}{-1}
 		\subfloat[$r=3,h=0.5$]{%
 		\subfloat{%
 		\includegraphics[scale=0.2]{images/flow/grid-radius-effect/triangle/r3-h0.5/summary_flow.eps}
@@ -583,7 +555,7 @@ In our experiments we observe that we recover better results by using $m=r$, whe
 \includegraphics[scale=0.2]{images/flow/grid-radius-effect/flower/r3-h0.5/summary_flow.eps}}%
 		}		
 	
-		\setcounter{subfigure}{0}
+		\setcounter{subfigure}{-2}
 		\subfloat[$r=5,h=0.5$]{%
 		\subfloat{%
 		\includegraphics[scale=0.2]{images/flow/grid-radius-effect/triangle/r5-h0.5/summary_flow.eps}
@@ -595,22 +567,40 @@ In our experiments we observe that we recover better results by using $m=r$, whe
 		\subfloat{%
 \includegraphics[scale=0.2]{images/flow/grid-radius-effect/flower/r5-h0.5/summary_flow.eps}}%
 		}				
+		
+		
 \label{fig:mx-flow-gs-radius-effect}
-\caption{Effects of var. grid step and ball radius}
+\caption{In the farther}
 \end{figure}
 
 \begin{figure}[!ht]
 \center
-[\textbf{TABLE}: Elastica energy evolution graph]
-\label{gif:mx-elastica-plots}
-\caption{Elastica computation along the iterations for different shapes. }
+\includegraphics[scale=0.5]{images/flow/elastica-energy-plot/r5h05.eps}
+\caption{Elastica computation along the iterations for different shapes. If radius is toos large, elastica may increase after a certain number of iterations. }
+\label{fig:mx-elastica-plots}
 \end{figure}
 
 
 
 \begin{figure}[!ht]
 \center
-[\textbf{FIGURE}: Effects of the flow filling holes; Effects of the flow in shape with different degrees of curvature.]
+\begin{minipage}[b]{0.5\textwidth}
+\center
+\subfloat{%
+		\includegraphics[scale=0.75]{images/flow/faster-high-curvature/0000.png}}%%1
+		\vspace{15pt}
+		\subfloat{%
+		\includegraphics[scale=0.75]{images/flow/faster-high-curvature/0005.png}}%
+\end{minipage}%
+\begin{minipage}[b]{0.5\textwidth}
+\center
+\subfloat{%
+		\includegraphics[scale=0.75]{images/flow/faster-high-curvature/0000.png}}%%1
+		\vspace{15pt}
+		\subfloat{%
+		\includegraphics[scale=0.75]{images/flow/faster-high-curvature/0005.png}}%
+\end{minipage}
+
 \label{fig:mx-speed-variation-hole-filling}
 \caption{High curvature regions evolves faster than lower ones; Holes are filled by the model. }
 \end{figure}
