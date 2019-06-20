@@ -16,6 +16,7 @@
 
 \newcommand{\todo}[1]{{\textcolor{blue}{#1}}}
 \newcommand{\test}[1]{{\textcolor{red}{#1}}}
+\newcommand{\jaco}[1]{{\textcolor{green!50!black}{#1}}}
 
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
@@ -26,7 +27,8 @@
 
 \begin{document}
 %
-\title{Digital Curvature Evolution Models for Image Segmentation\thanks{This  work has  been  partially  funded by CoMeDiC ANR-15-CE40-0006 research grant.}}
+\title{\jaco{A Digital Evolution Model for Image Segmentation guided by Elastica Energy}\thanks{This  work has  been  partially  funded by CoMeDiC ANR-15-CE40-0006 research grant.}}
+%\title{Digital Curvature Evolution Models for Image Segmentation\thanks{This  work has  been  partially  funded by CoMeDiC ANR-15-CE40-0006 research grant.}}
 
 \author{Daniel Antunes\inst{1}
 Jacques-Olivier Lachaud\inst{1}
@@ -215,8 +217,9 @@ We are going to use the digital version of the energy, using multigrid convergen
  In the following we omit the grid step $h$ to simplify expressions (or, putting it differently, we assume that $X$ is rescaled by $1/h$ and we set $h=1$).
 
 \section{Local combinatorial optimization \todo{(To be written, code is done)}}
-    The goal of this section is to exemplify the use of digital estimator in optimization scheme in a simple
-    local search algorithm.
+
+\jaco{The objectives of this section is to show both the potential of minimizing a purely digital Elastica energy but also to underline the difficulties of using it as is in a global combinatorial optimization framework.}
+
 \begin{itemize}
 	\item{Simple optimization scheme for elastica energy using the II estimator;}
 	\item{Define the local search neighborhood;}
@@ -226,75 +229,81 @@ We are going to use the digital version of the energy, using multigrid convergen
 
 \hrulefill
 
-In this section we present a process that, given a digital shape $S_0$, generates a sequence $(S_i)$ of shapes with non-increasing elastica energy. The idea is to define a neighborhood $\mathcal{N}_i$ of $S_i$ and choose the element of $\mathcal{N}_i$ with lowest energy.  The process is suited for the integral invariant but also other curvature estimators, for example, MDCA \cite{roussillon11}.
+In this section we present a process that, given a digital shape
+$S_0$, generates a sequence $(S_i)$ of shapes with non-increasing
+elastica energy. The idea is to define a neighborhood of shapes
+$\mathcal{N}_i$ to the shape $S_i$ and choose the element of
+$\mathcal{N}_i$ with lowest energy.  The process is suited for the
+integral invariant estimator but also for other curvature estimators,
+for example, MDCA \cite{roussillon11}.
 
-Let $S$ a $2$-dimensional digital shape. We adopt the cellular-grid model to represent $S$, i.e., pixels and its lower dimensional counterparts, linels and pointels, are part of $S$. In particular, we denote by $\partial S$ the topological boundary of $S$, i.e., the connected sequence of linels such that for each linel we have one of its incident pixels in $S$ and the other not in $S$.
+Let $S$ be a $2$-dimensional digital shape. We adopt the cellular-grid model to represent $S$, i.e., pixels and its lower dimensional counterparts, linels and pointels, are part of $S$. In particular, we denote by $\partial S$ the topological boundary of $S$, i.e., the connected sequence of linels such that for each linel we have one of its incident pixels in $S$ and the other not in $S$.
 
 
-Let $d_{S}:\Omega \rightarrow \mathcal{R}$ be the euclidean distance transformation with respect to shape $S$. The value $d_S(x)$ gives the euclidean distance between $x$ and the closest background pixel in $\Omega$. 
+Let $d_{S}:\Omega \rightarrow \mathcal{R}$ be the euclidean distance transformation with respect to shape $S$. The value $d_S(x)$ gives the euclidean distance between $x$ and the closest pixel in $S$. 
 
 \begin{definition}[m-Ring Set]
 Given a digital shape $S\in\Omega$, its distance transformation $d_S$ and natural numbers $m,r > 0$, we define its $m$-ring set as
 
 \begin{align*}
-	\quad R_m(S) = \left\{ x \in \Omega \; | \; 0 < d_S(x) \leq m \right\} \; \cup \;  \left\{ x \in \Omega \; | \; 	0 < d_{\overline{S}}(x) \leq m \right\}\\
+	\quad R_m(S) &= R_m^-(S) \; \cup \; R_m^+(S) \\
+	&= \left\{ x \in \Omega \; | \; 0 < d_S(x) \leq m \right\} \; \cup \;  \left\{ x \in \Omega \; | \; 	0 < d_{\overline{S}}(x) \leq m \right\}\\
 \end{align*}
 
 \end{definition}
 
-Consider the following neighbor set candidate
+Consider the following set of neighbor candidates to $S$:
 
 \begin{align*}
-\mathcal{U}(S) = \{ D \; | D \subset R_1(S) \cup S \; and \; \text{D is connected} \}
+\mathcal{U}(S) = \{ D \; | D \subset R_1(S) \cup S \; \text{and} \; \text{$D$ is connected}. \}
 \end{align*}
 
 
-Such set can be extremely large and its complete exhaustion is prohibitively expensive.  Instead, we explore a subset of it with the help of $(n)$-glued curves.
+Such set can be extremely large and its complete exhaustion is prohibitively expensive.  Instead, we explore a subset of it with the help of $n$-glued curves.
 
-An oriented closed curve $C$ is a sequence of linels, but it can also be seen as a sequence of pointels. In particular, the first pointel is also the last one. We write $p < q$ to denote that a pointel $p$ comes first than $q$ in some curve.
+An oriented closed curve $C$ is a sequence of linels. A segment of $C$ is a subsequence $c \in C$ of its linels.
 
-
-\begin{definition}[$n$-Glued Curve]
-Given oriented and closed curves $C_1,C_2$ its set of $n$-glued curves is defined as
-
-\begin{align*}
-	\mathcal{G}_n(C_1,C_2) = \{ g=(a,p,q,b) \; | \; a,b \in C_1, \, p,q \in C_2, \, a<b, \, q-p=n \},
-\end{align*}
-
-
+\begin{definition}[Glued Curve]
+Given closed curves $C_1,C_2$ agreeing with some orientation $q$, a glued curve is a closed curve  $(c_1,\ell_1,c_2,\ell_2)$ with orientation $q$ and $c_1 \in C_1, c_2 \in C_2$. The linels $\ell_1,\ell_2$ are called junction linels.
 \end{definition}
 
-It is easy to check that any two glued curves $g_1,g_2$ can be combined as long as exists an orientation such that $a_2 > b_1$ and $b_2 < a_1$. We denote $\mathcal{G}_{n,k}(C_1,C_2)$  the set of all $k$-combined $n$-glued curves. Finally, we define
+\begin{definition}[$n$-Glued Curve Set]
+Given closed curves $C_1,C_2$ with same orientation, its set of $n$-glued curves is defined as
+
+\begin{align*}
+	\mathcal{G}_n(C_1,C_2) = \{ (c_1,\ell_1,c_2,\ell_2) \; | \; |c_2|=n \},
+\end{align*}
+\end{definition}
+
+It is easy to check that any two glued curves $g_1,g_2$ can be combined as long as its $C_2$ segments do not intersect. We denote $\mathcal{G}_{n,k}(C_1,C_2)$  the set of all $k$-combined $n$-glued curves. \jaco{(Is it useful if afterwards you never combine glued curves, ie $k=1$ after ?)} Finally, we define
 
 \begin{align*}
 	\mathcal{G}(C_1,C_2) = \bigcup_{n,k}{\mathcal{G}_{n,k}(C_1,C_2) }
 \end{align*}
 
 
-The parameters $n,k$ are used to parameterize the neighborhood set.
+The parameters $n,k$ are used to parameterize the neighborhood set. Let $S_O = \partial ( R_1^-(S) ) $ and $S_I = \partial ( S \cup R_1^+(S) )$, the neighborhood set to shape $S$ is defined as
 
 \begin{align*}
-	\mathcal{N}(S,N,k) = \bigcup_{1 \leq n \leq N} \mathcal{G}_{n,k}(\partial S, S_I) \cup \mathcal{G}_{n,k}(\partial S, S_O)
+	\mathcal{N}(S,N,k) = \bigcup_{1 \leq n \leq N} int \big( \; \mathcal{G}_{n,k}(\partial S, S_I) \;\big) \cup int \big( \; \mathcal{G}_{n,k}(\partial S, S_O) \; \big),
 \end{align*}
 
- Algorithm \ref{alg:local-search} describes the local combinatorial process and figures \ref{fig:local-comb-square-results} presents the results of executing the algoritmh for different shapes with $k=1$ and $n<20$.
+where $int(C)$ is the interior of the shape bounded by oriented curve $C$. Algorithm~\ref{alg:local-search} describes the local combinatorial process and Figure~\ref{fig:local-comb-square-results} presents the digital curve evolution when executing this algorithm for two different shapes with $k=1$ and $N=20$.
 
 
-\begin{algorithm}[H]
+\begin{algorithm}
  \SetKwData{It}{i}
  \SetKwData{MIt}{maxIt}
  \SetKwData{Tol}{tolerance}
  \SetKwData{Delta}{delta}
- \SetKwData{CurValue}{v} 
  \SetKwData{Best}{best} 
  \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
  
- \Input{A digital set $S$; the number of jonctions $k$ to use; the maximum length of glued curves $n$; the maximum number of iterations \MIt; and a stop condition \Tol}
+ \Input{A digital set $S$; the number of junctions $k$ to use; the maximum length of glued curves $N$; the maximum number of iterations \MIt; and a stop condition \Tol}
  \BlankLine
  \Delta $\longleftarrow$ \Tol+1\;
- \CurValue $\longleftarrow$ $\hat{E}(S)$\;
  \While{ \It $<$ \MIt \bf{and} \Delta $>$ \Tol  }{
-  	\For{$ X \in \mathcal{N}(S_i,n,k) $}
+  	\For{$ X \in \mathcal{N}(S_i,N,k) $}
 	{
 		\If{ $\hat{E}(X)$ $<$ $\hat{E}(X^\star)$ }
 		{
@@ -303,8 +312,7 @@ The parameters $n,k$ are used to parameterize the neighborhood set.
 	}
 	\It $\longleftarrow$ \It $+1$\;
 	$S_{i} \longleftarrow X^\star$\;
-	\Delta $\longleftarrow$ \CurValue - $\hat{E}(S_{i})$\;	
-	\CurValue $\longleftarrow$ $\hat{E}(S_{i})$\;
+	\Delta $\longleftarrow$ $\hat{E}(S_{i-1}) - \hat{E}(S_{i})$\;	
  }
  \label{alg:local-search} 
  \caption{Local combinatorial optimization for elastica minimization.}
@@ -339,7 +347,18 @@ The parameters $n,k$ are used to parameterize the neighborhood set.
 \end{figure}
 
 
-The running time of algorithm \ref{alg:local-search} is summarized in table (). Although its use in practical applications is limited, we demonstrate that digital estimators are effective in its measurements and the evolved flows behave as expected. We observe that is a complete digital approach, and we do not suffer from discretization and rounding problems, a common issue in continuous models. In the next section, we explore a more efficient approach.
+The running time of algorithm \ref{alg:local-search} is summarized in
+table (). Although its use in practical applications is limited, we
+demonstrate that digital estimators are effective in its measurements
+and the evolved flows behave as expected. We observe that is a
+complete digital approach, and we do not suffer from discretization
+and rounding problems, a common issue in continuous models.
+Furthermore we have checked that this approach works
+  indifferently with Integral Invariant curvature estimator and
+  Maximal Digital Circular Arc curvature estimator. So the convergence
+  of the digital curvature estimator seems to be the cornerstone to
+  get a digital curve behaving like a continuous elastica.  In the
+next section, we explore a more efficient approach.
 
 \section{Digital Curvature Flow \todo{(Partly done)}}
 
@@ -358,24 +377,26 @@ The running time of algorithm \ref{alg:local-search} is summarized in table (). 
 	Let $\Omega_C$ the collection of digital connected digital sets in $\Omega$. Given a digital shape $S$, we wish to evolve it into a shape $S^\star$ similar to $S$ but with lower digital elastica energy. We recall the digital curvature estimator definition
 	
 \begin{align}
-	\hat{\kappa}^2(y) &= c1\Big( c2 - \sum_{x_i \in B_r(y)}{x_i} \Big)^2, 
+	\hat{\kappa}^2(y) &= c1\Big( c2 - \sum_{x_i \in B_r(y) \cap S}{x_i} \Big)^2, 
 	\label{eq:curvature-estimator-pixels}
 \end{align}
 
-where $c_1=3/r^6$ and $c_2=\pi r^2/2$. Let $X,Y$ be the set of pixels and linels, respectively, in $\Omega$. We define the following binary model
+where $c_1=3/r^6$ and $c_2=\pi r^2/2$ \jaco{, and $B_r(y)$ is a shorthand for the pixels of the shape $S$ at distance less or equal to $r$ from $y$}. Let $X,Y$ be the set of pixels and linels, respectively, in $\Omega$. We define the following binary model
 		
 \begin{align}
-\text{Minimize}_{x,y} & \sum_{y}{c_1y \Big(c_2 - \sum_{x_i \in B_r(y)}{x_i}\Big)^2	 } \cdot s(y,Y) \nonumber + F(S,X_{=1} \cup Y_{=1}) \nonumber \\
+\text{Minimize}_{x,y} & \sum_{y}{c_1y \Big(c_2 - \sum_{x_i \in B_r(y)}{x_i}\Big)^2	 } + F(S,X_{=1} \cup Y_{=1}) \nonumber \\
 \text{subject to} & \nonumber \\
-& (X_{=1} \cup Y_{=1}) \in \Omega_C, \; x,y \in \{0,1\}
+& (X_{=1} \cup Y_{=1}) \in \Omega_C, \; x,y \in \{0,1\}^\Omega
 \label{eq:general-binary-formulation}
 \end{align}
-	
+\jaco{($s(y,Y)$ ? Do you mean $\hat{s}$ of section 2. If so, takes the same notation (only one parameter in section 2). Here for me it is unclear what is $B_r(y)$. Is it correct to assume that $B_r(y)$  includes $S$ or $X_{=1}$ in its definition ? $x$ is also here probably a vector (since you have $x_i$) ).}
 
 
 where $F$ is some measure of similarity, e.g. distance, between initial shape $S$ and candidate solution. Such term is needed, otherwise the uninteresting empty set would be the optimal solution.
 
-Formulation \eqref{eq:general-binary-formulation} is of order four, binary and non-convex. These properties makes it a hard optimization problem. We are going to explore an alternative energy, which is a simplification of the latter. In section (...) we comment our attempts in optimizing  other variations of \eqref{eq:general-binary-formulation}.
+Formulation \eqref{eq:general-binary-formulation} is of order four, binary and non-convex. These properties make it a hard optimization problem. We are going to explore an alternative energy, which is a simplification of the former. In section (...) we comment our attempts in optimizing  other variations of \eqref{eq:general-binary-formulation}.
+
+\jaco{(I would illustrate your definitions and notations on a figure, stating precisely $S$, its inner boundary, its m-ring, the optimization variables... Are you indeed using the length estimator ? If not, remove it for simplifying the exposition)}
 
 \subsection{A first model}
 
@@ -446,17 +467,23 @@ Recall that II estimates curvature by computing the difference between half of t
 
 The same reasoning applies for non-convex parts. Indeed, concave regions are convex in the shape complement. In the expasion mode we apply the same reasoning on the image complement, and by doing this we are able to handle concavities. It is called expansion mode because the optimization region, in this case, is the outer pixel boundary of the original shape. 
 
+
 \begin{table}
-	\center
-	\begin{tabular}{c|c|c}
-		& Shrinking Mode & Expansion Mode\\
-		\hline
-		$\kappa \geq 0$ & Remove & Add\\
-		$\kappa < 0$ & Keep	& Keep
-	\end{tabular}
-	\caption{Summary of digital curvature evolution model. The curvature values are with respect the original image.}		
-	\label{tab:flow-summary}	
+  \center
+  \begin{tabular}{|c|c|c|c|c|c|} \hline
+    shrink mode &    $\kappa \gg 0$ & $\kappa > 0$ & $\kappa \approx 0$ & $\kappa < 0$ & $\kappa \ll 0$ \\ \hline
+    $Z$ & $x_k=1$ & $x_k \in \{0,1\}$ & $x_k=0$ & $x_k=0$ & $x_k=0$ \\ \hline
+    $S_{i+1} \leftarrow S_i \setminus Z$ & eroded & prob. eroded & unchanged & unchanged & unchanged \\ \hline \hline
+    expansion mode &    $\bar{\kappa} \gg 0$ & $\bar{\kappa} > 0$ & $\bar{\kappa} \approx 0$ & $\bar{\kappa} < 0$ & $\bar{\kappa} \ll 0$ \\ \hline
+    $\bar{Z}$ & $\bar{x}_k=1$ & $\bar{x}_k \in \{0,1\}$ & $\bar{x}_k=0$ & $\bar{x}_k=0$ & $\bar{x}_k=0$ \\ \hline
+    $S_{i+1} \leftarrow \overline{\bar{S}_i \setminus \bar{Z}}$ & dilated & prob. dilated & unchanged & unchanged & unchanged \\ \hline 
+  \end{tabular}
+  
+  \label{tab:flow-summary}	  
+  \caption{  Since the curvature is negated when reversing the curve (i.e. $\bar{\kappa}=-\kappa$), this process can only shrink  convex parts in shrink mode and expand concave parts in expansion mode.}
+
 \end{table}
+
 
 In figure \ref{fig:m1-square-flow} we see some results for algorithm \ref{alg:evolution-model} with $m=1$. We observe a global movement towards roundness, but with several artifacts. We minimize the effects of a jaggy boundary by including a length penalization, weighed by coefficient $\beta$. Nonetheless, a higher estimation ball radius creates unstable shapes (see figure \ref{fig:m1-higher-ball-radius}). In fact, the estimator is very sensitive in regions of low squared curvature, and its precisely in those regions which spurious pixels are included.
 
