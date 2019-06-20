@@ -458,23 +458,28 @@ The same reasoning applies for non-convex parts. Indeed, concave regions are con
 	\label{tab:flow-summary}	
 \end{table}
 
-In figure \ref{fig:m1-square-flow} we see some results for algorithm \ref{alg:evolution-model} with $m=1,r=3$. We observe a global movement towards roundness, but with several artifacts. We minimize the effects of a jaggy boundary by including length penalization. Nonetheless, a higher estimation ball radius creates unstable shapes (see figure \ref{fig:m1-higher-ball-radius}). In fact, the estimator is very sensitive in regions of low squared curvature, and its precisely in those regions which spurious pixels are included.
+In figure \ref{fig:m1-square-flow} we see some results for algorithm \ref{alg:evolution-model} with $m=1$. We observe a global movement towards roundness, but with several artifacts. We minimize the effects of a jaggy boundary by including a length penalization, weighed by coefficient $\beta$. Nonetheless, a higher estimation ball radius creates unstable shapes (see figure \ref{fig:m1-higher-ball-radius}). In fact, the estimator is very sensitive in regions of low squared curvature, and its precisely in those regions which spurious pixels are included.
 
 
 \begin{figure}[!ht]
 \center
-[\textbf{FIGURE}: Flow comparison with and without length penalization]
-\caption{The flow is very sensitive to the variations of the estimator, which are particularly important in regions of low squared curvature. The artifacts are reduced if we inject a length penalization term. }
+\begin{minipage}[b]{0.33\textwidth}
+	\subfloat[$r=3, \beta=0$\label{}]{%
+	\includegraphics[scale=0.2]{images/flow/length-radius-effect/triangle-r3-nolength/summary_flow.eps}
+	}%
+\end{minipage}%
+\begin{minipage}[b]{0.33\textwidth}
+	\subfloat[$r=3, \beta=0.15$\label{}]{%
+	\includegraphics[scale=0.2]{images/flow/length-radius-effect/triangle-r3-length0.15/summary_flow.eps}
+	}%
+\end{minipage}%
+\begin{minipage}[b]{0.33\textwidth}
+	\subfloat[$r=5, \beta=0.15$\label{}]{%
+	\includegraphics[scale=0.2]{images/flow/length-radius-effect/triangle-r5/summary_flow.eps}
+	}%
+\end{minipage}%
+\caption{The algorithm is very sensitive to the variations of the estimator, which are particularly important in regions of low squared curvature. Artifacts are reduced with a length penalization but increases if we use a higher ball radius. }
 \label{fig:m1-square-flow}
-\end{figure}
-
-
-
-\begin{figure}[!ht]
-\center
-[\textbf{FIGURE}: Effect of estimation ball radius in the flow]
-\caption{The model creates more artifacts with higher values of estimation ball radius. }
-\label{fig:m1-higher-ball-radius}
 \end{figure}
 
 
@@ -486,17 +491,83 @@ In the previous section we notice that the algorithm produces shapes with many a
 
 \begin{figure}[!ht]
 \center
-[\textbf{FIGURE}: Effects of farther rings computation in the flow.]
+\center
+\begin{minipage}[b]{0.33\textwidth}
+	\subfloat[$r=5, m=1$\label{}]{%
+	\includegraphics[scale=0.2]{images/flow/farther-rings/square-r5-l1/summary_flow.eps}
+	}%
+\end{minipage}%
+\begin{minipage}[b]{0.33\textwidth}
+	\subfloat[$r=5, m=2$\label{}]{%
+	\includegraphics[scale=0.2]{images/flow/farther-rings/square-r5-l2/summary_flow.eps}
+	}%
+\end{minipage}%
+\begin{minipage}[b]{0.33\textwidth}
+	\subfloat[$r=5, m=3$\label{}]{%
+	\includegraphics[scale=0.2]{images/flow/farther-rings/square-r5-l3/summary_flow.eps}
+	}%
+\end{minipage}%
 \label{fig:mx-square-flow}
-\caption{By positioning the estimation ball on farther rings, we avoid artifacts creation. }
+\caption{By positioning the estimation ball on farther rings, we minimize artifacts creation. }
 \end{figure}
 
-In our experiments we observe that we recover better results by using $n=r$, where $r$ is the estimation ball radius. In plots () we observe that the elastica energy value decreases along the iterations.
+In our experiments we observe that we recover better results by using $m=r$, where $r$ is the estimation ball radius. In plots () we observe that the elastica energy value decreases along the iterations.
 
 
 \begin{figure}[!ht]
 \center
-[\textbf{FIGURE}: Grid step and ball radius influence figure for different shapes.]
+
+		\setcounter{subfigure}{-3}
+		\subfloat[$r=3,h=1.0$]{%
+		\subfloat{%
+		\includegraphics[scale=0.2]{images/flow/grid-radius-effect/triangle/r3-h1.0/summary_flow.eps}
+		}%
+		\hspace{15pt}
+		\subfloat{%
+		\includegraphics[scale=0.15]{images/flow/grid-radius-effect/square/r3-h1.0/summary_flow.eps}}%
+		\hspace{15pt}
+		\subfloat{%
+\includegraphics[scale=0.2]{images/flow/grid-radius-effect/flower/r3-h1.0/summary_flow.eps}}%
+		}
+		
+		\setcounter{subfigure}{-2}
+		\subfloat[$r=5,h=1.0$]{%
+		\subfloat{%
+		\includegraphics[scale=0.2]{images/flow/grid-radius-effect/triangle/r5-h1.0/summary_flow.eps}
+		}%
+		\hspace{15pt}
+		\subfloat{%
+		\includegraphics[scale=0.15]{images/flow/grid-radius-effect/square/r5-h1.0/summary_flow.eps}}%
+		\hspace{15pt}
+		\subfloat{%
+\includegraphics[scale=0.2]{images/flow/grid-radius-effect/flower/r5-h1.0/summary_flow.eps}}%
+		}					
+		
+		\setcounter{subfigure}{-1}
+		\subfloat[$r=3,h=0.5$]{%
+		\subfloat{%
+		\includegraphics[scale=0.2]{images/flow/grid-radius-effect/triangle/r3-h0.5/summary_flow.eps}
+		}%
+		\hspace{15pt}
+		\subfloat{%
+		\includegraphics[scale=0.15]{images/flow/grid-radius-effect/square/r3-h0.5/summary_flow.eps}}%
+		\hspace{15pt}
+		\subfloat{%
+\includegraphics[scale=0.2]{images/flow/grid-radius-effect/flower/r3-h0.5/summary_flow.eps}}%
+		}		
+	
+		\setcounter{subfigure}{0}
+		\subfloat[$r=5,h=0.5$]{%
+		\subfloat{%
+		\includegraphics[scale=0.2]{images/flow/grid-radius-effect/triangle/r5-h0.5/summary_flow.eps}
+		}%1
+		\hspace{15pt}
+		\subfloat{%
+		\includegraphics[scale=0.15]{images/flow/grid-radius-effect/square/r5-h0.5/summary_flow.eps}}%
+		\hspace{15pt}
+		\subfloat{%
+\includegraphics[scale=0.2]{images/flow/grid-radius-effect/flower/r5-h0.5/summary_flow.eps}}%
+		}				
 \label{fig:mx-flow-gs-radius-effect}
 \caption{Effects of var. grid step and ball radius}
 \end{figure}
