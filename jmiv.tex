@@ -216,21 +216,11 @@ We are going to use the digital version of the energy, using multigrid convergen
 \end{align}
  In the following we omit the grid step $h$ to simplify expressions (or, putting it differently, we assume that $X$ is rescaled by $1/h$ and we set $h=1$).
 
-\section{Local combinatorial optimization \todo{(To be written, code is done)}}
+\section{Local combinatorial optimization}
 
-\jaco{The objectives of this section is to show both the potential of minimizing a purely digital Elastica energy but also to underline the difficulties of using it as is in a global combinatorial optimization framework.}
+The objectives of this section is to show both the potential of minimizing a purely digital Elastica energy but also to underline the difficulties of using it as is in a global combinatorial optimization framework.
 
-\begin{itemize}
-	\item{Simple optimization scheme for elastica energy using the II estimator;}
-	\item{Define the local search neighborhood;}
-    \item{Describe process;}	
-    \item{Discussion: Show some results; }	
-\end{itemize}
-
-\hrulefill
-
-In this section we present a process that, given a digital shape
-$S_0$, generates a sequence $(S_i)$ of shapes with non-increasing
+Given a digital shape $S_0$ we describe a process that generates a sequence $(S_i)$ of shapes with non-increasing
 elastica energy. The idea is to define a neighborhood of shapes
 $\mathcal{N}_i$ to the shape $S_i$ and choose the element of
 $\mathcal{N}_i$ with lowest energy.  The process is suited for the
@@ -247,7 +237,7 @@ Given a digital shape $S\in\Omega$, its distance transformation $d_S$ and natura
 
 \begin{align*}
 	\quad R_m(S) &= R_m^-(S) \; \cup \; R_m^+(S) \\
-	&= \left\{ x \in \Omega \; | \; 0 < d_S(x) \leq m \right\} \; \cup \;  \left\{ x \in \Omega \; | \; 	0 < d_{\overline{S}}(x) \leq m \right\}\\
+	&= \left\{ x \in \Omega \; | \; m-1 < d_S(x) \leq m \right\} \; \cup \;  \left\{ x \in \Omega \; | \; 	m-1 < d_{\overline{S}}(x) \leq m \right\}\\
 \end{align*}
 
 \end{definition}
@@ -262,6 +252,17 @@ Consider the following set of neighbor candidates to $S$:
 Such set can be extremely large and its complete exhaustion is prohibitively expensive.  Instead, we explore a subset of it with the help of $n$-glued curves.
 
 An oriented closed curve $C$ is a sequence of linels. A segment of $C$ is a subsequence $c \in C$ of its linels.
+
+\begin{figure}
+\center
+	\subfloat[\label{}]{%
+	\includegraphics[scale=0.2]{images/local_search/definitions/regions2.eps}
+	}\hspace{40pt}%
+	\subfloat[\label{}]{%
+	\includegraphics[scale=0.2]{images/local_search/definitions/glued-curve.eps}
+	}%	
+	\caption{The red contour in figure (a) illustrates a $2$-ring set, while its green contour its inner-pixel boundary. In figure (b) we have an element of set $\mathcal{G}_{11,2}(C_1,C_2)$ drawn in red, where $C_2$ is the outer curve. }
+\end{figure}
 
 \begin{definition}[Glued Curve]
 Given closed curves $C_1,C_2$ agreeing with some orientation $q$, a glued curve is a closed curve  $(c_1,\ell_1,c_2,\ell_2)$ with orientation $q$ and $c_1 \in C_1, c_2 \in C_2$. The linels $\ell_1,\ell_2$ are called junction linels.
@@ -282,7 +283,7 @@ It is easy to check that any two glued curves $g_1,g_2$ can be combined as long 
 \end{align*}
 
 
-The parameters $n,k$ are used to parameterize the neighborhood set. Let $S_O = \partial ( R_1^-(S) ) $ and $S_I = \partial ( S \cup R_1^+(S) )$, the neighborhood set to shape $S$ is defined as
+The parameters $n,k$ are used to parameterize the neighborhood set. Let $S_O = \partial ( S \setminus R_1^-(S) ) $ and $S_I = \partial ( S \cup R_1^+(S) )$, the neighborhood set to shape $S$ is defined as
 
 \begin{align*}
 	\mathcal{N}(S,N,k) = \bigcup_{1 \leq n \leq N} int \big( \; \mathcal{G}_{n,k}(\partial S, S_I) \;\big) \cup int \big( \; \mathcal{G}_{n,k}(\partial S, S_O) \; \big),
@@ -360,19 +361,7 @@ Furthermore we have checked that this approach works
   get a digital curve behaving like a continuous elastica.  In the
 next section, we explore a more efficient approach.
 
-\section{Digital Curvature Flow \todo{(Partly done)}}
-
-\begin{itemize}
-	\item{Model formulation;}
-	\item{Levels interpretation;}
-    \item{Connection with II estimator;}	
-    \item{\todo{Add distance transform}}
-    \item{\todo{Clarify optimization band of width 1 for guaranteeing connectivity}}
-    \item{\todo{Clarify asymetry and inversion of optimization. Flat parts are too unstable so we locate alternatively places that are "too" convex and places that are too concave.}}
-    \item{\test{Try dilatation then apply curve evolution (shrink mode), then alternate. Perhaps propose bigger dilatation for a reconnexion model with wider gaps.}}
-\end{itemize}
-
-\hrulefill
+\section{Digital Curvature Flow}
 
 	Let $\Omega_C$ the collection of digital connected digital sets in $\Omega$. Given a digital shape $S$, we wish to evolve it into a shape $S^\star$ similar to $S$ but with lower digital elastica energy. We recall the digital curvature estimator definition
 	
@@ -394,8 +383,6 @@ where $c_1=3/r^6$ and $c_2=\pi r^2/2$. Let $X,Y$ be the set of pixels and linels
 where $F$ is some measure of similarity, e.g. distance, between initial shape $S$ and candidate solution. Such term is needed, otherwise the uninteresting empty set would be the optimal solution.
 
 Formulation \eqref{eq:general-binary-formulation} is of order four, binary and non-convex. These properties make it a hard optimization problem. We are going to explore an alternative energy, which is a simplification of the former. In section (...) we comment our attempts in optimizing  other variations of \eqref{eq:general-binary-formulation}.
-
-\jaco{(I would illustrate your definitions and notations on a figure, stating precisely $S$, its inner boundary, its m-ring, the optimization variables... Are you indeed using the length estimator ? If not, remove it for simplifying the exposition)}
 
 \subsection{A first model}
 
@@ -484,7 +471,7 @@ The same reasoning applies for non-convex parts. Indeed, concave regions are con
 \end{table}
 
 
-In figure \ref{fig:m1-square-flow} we see some results for algorithm \ref{alg:evolution-model} with $m=1$. We observe a global movement towards roundness, but with several artifacts. We minimize the effects of a jaggy boundary by including a length penalization, weighed by coefficient $\beta$. Nonetheless, a higher estimation ball radius creates unstable shapes (see figure \ref{fig:m1-higher-ball-radius}). In fact, the estimator is very sensitive in regions of low squared curvature, and its precisely in those regions which spurious pixels are included.
+In figure \ref{fig:m1-square-flow} we see some results for algorithm \ref{alg:evolution-model} with $m=1$. We observe a global movement towards roundness, but with several artifacts. We minimize the effects of a jaggy boundary by including a length penalization, weighed by coefficient $\beta$. Nonetheless, a higher estimation ball radius creates unstable shapes. In fact, the estimator is very sensitive in regions of low squared curvature, and its precisely in those regions which spurious pixels are included.
 
 
 \begin{figure}[!ht]
@@ -595,14 +582,11 @@ In our experiments, the best results are obtained by executing algorithm \ref{al
 \begin{minipage}[b]{0.5\textwidth}
 \center
 \subfloat{%
-		\includegraphics[scale=0.75]{images/flow/faster-high-curvature/0000.png}}%%1
-		\vspace{15pt}
-		\subfloat{%
-		\includegraphics[scale=0.75]{images/flow/faster-high-curvature/0005.png}}%
+		\includegraphics[scale=0.25]{images/flow/fill-holes/summary_flow.eps}}%%1
 \end{minipage}
 
 \label{fig:mx-speed-variation-hole-filling}
-\caption{High curvature regions evolves faster than lower ones; Holes are filled by the model. }
+\caption{High curvature regions evolves faster than lower ones (a). The flow can handle holes. }
 \end{figure}
 
 
