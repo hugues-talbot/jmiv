@@ -349,7 +349,7 @@ where $int(C)$ is the interior of the shape bounded by oriented curve $C$. Algor
 
 
 The running time of algorithm \ref{alg:local-search} is summarized in
-table (). Although its use in practical applications is limited, we
+table \ref{tab:summary-local-comb-rtime}. All the experiments in this paper were executed in a five core $3.4Ghz$ cpu. Although its use in practical applications is limited, we
 demonstrate that digital estimators are effective in its measurements
 and the evolved flows behave as expected. We observe that is a
 complete digital approach, and we do not suffer from discretization
@@ -360,6 +360,32 @@ Furthermore we have checked that this approach works
   of the digital curvature estimator seems to be the cornerstone to
   get a digital curve behaving like a continuous elastica.  In the
 next section, we explore a more efficient approach.
+
+
+
+\begin{figure}
+\begin{minipage}[b]{0.5\textwidth}
+\center
+\includegraphics[scale=0.35]{images/local_search/square/graph.eps}
+\caption{Elastica computation along iterations of algorithm \ref{alg:local-search}}
+\label{fig:plot-elastica-local-search}
+\end{minipage}\hspace{40pt}%
+\begin{minipage}[b]{0.45\textwidth}
+\center
+\captionsetup{type=table}
+\begin{tabular}{|l|c|c|}
+\hline
+& $h=1.0$ & $h=0.5$\\
+\hline
+Square & 747s (36s/it) & 7497s (202s/it)\\
+\hline
+Flower & 6946s (87s/it)  & 66376s (593s/it)\\
+\hline
+\end{tabular}
+\caption{Running times for the local combinatorial optimization algorithm with $k=1,N=20$.}
+\label{tab:summary-local-comb-rtime}
+\end{minipage}
+\end{figure}
 
 \section{Digital Curvature Flow}
 
@@ -563,11 +589,9 @@ In our experiments, the best results are obtained by executing algorithm \ref{al
 \begin{figure}[!ht]
 \center
 \includegraphics[scale=0.5]{images/flow/elastica-energy-plot/r5h05.eps}
-\caption{Elastica computation along the iterations for different shapes. If radius is toos large, elastica may increase after a certain number of iterations. }
+\caption{Elastica computation along the iterations for different shapes. If radius is too large, elastica may increase after a certain number of iterations. }
 \label{fig:mx-elastica-plots}
 \end{figure}
-
-
 
 \begin{figure}[!ht]
 \center
@@ -592,13 +616,72 @@ In our experiments, the best results are obtained by executing algorithm \ref{al
 
 \subsection{Optimization method}
 
-\begin{itemize}
-	\item{The energy is nonsubmodular}
-	\item{QPBO label few pixels for small $n$, but label all pixels for $n=r$.}	
-\end{itemize}
+Let $F$ be a function of $n$ binary variables, i.e.
+
+\begin{align*}
+F(y_1,\cdots, y_n) = \sum_{i}{F_i(y_i)} + \sum_{i < j}{F_{i,j}(y_i,y_j)}
+\end{align*}
+
+Function $F$ is submodular if and only if the following inequality holds for each pairwise term $F_{i,j}$ \cite{kolmogorov04}
+
+\begin{align*}
+	\quad F_{i,j}(0,0) + F_{i,j}(1,1) \leq F_{i,j}(0,1) + F_{i,j}(1,0)
+\end{align*}
+
+Energy \eqref{eq:curvature_highlighting_simplified} is non-submodular and optimizing it is a difficult problem, which
+constrained us to use heuristics and approximation algorithms. The QPBO method \cite{rother07} transforms the
+original problem in a max-flow/min-cut formulation and returns a full optimal labeling for submodular energies. For
+non-submodular energies the method is guaranteed to return a partial labeling with the property that the set of labeled
+variables is part of an optimal solution. That property is called partial optimality.
+
+In practice, QPBO can leave many pixels unlabeled. There exist two extensions of QPBO that ameliorate this limitation: QPBOI
+(improve) and QPBOP (probe). The first is an approximation method that is guaranteed to not increase the energy, but we
+lost the property of partial optimality. The second is an exact method which is reported to label more variables than
+QPBO. We use QPBOP. The extended computation region also regularizes the energy and we have checked that it induces a
+higher number of labeled variables.
 
 
-\section{Segmentation and comparison with state-of-the-art \todo{(To be done)}}
+\section{Application in image segmentation}
+
+We present an application of the digital flow described in the previous section for supervised image segmentation. We include a data fidelity and length penalization terms in the energy. At iteration $k$, we minimize the following energy
+
+\begin{align}			
+	\min_{Y_k} \sum_{y \in Y_k}{\left( \alpha \cdot s(y) + \gamma \cdot g(y) \right)} + \beta \cdot \sum_{y \in R_r(S_k)}{\hat{\kappa}_{r}^2(y)}.
+	\label{eq:boundary-correction-energy}
+\end{align}
+	
+	Let $\mathcal{N}_4(y)$ denote the four neighborhood of pixel $y$. Length penalization is defined as
+	
+	
+	\begin{align*}
+		s(y)=\sum_{y_i \in \mathcal{N}_4(y)}{ t(y_i) }, \quad \text{where } t(y_i) = \left\{\begin{array}{ll}
+		(y-y_i)^2, & \text{if } y_i \in O_{r,i}\\
+		(y-0), & \text{if } y_i \in F_{r,i}\\
+		(y-1), & \text{otherwise }
+		\end{array}\right.
+	\end{align*}
+	
+	Given foreground and background seeds selected by the user, we derive mixed gaussian distributions  of color intensities $G_f$ and $G_b$, and we define the data fidelity term as
+	
+	\begin{align*}
+		g(y) = -(1-y)\log{G_f(I(y))} - (y)\log{G_b(I(y))}
+	\end{align*}
+	
+	Notice that data and length terms are defined in such a way in order to comply with algorithm \ref{alg:evolution-model}, in which we take the complement of the optimal solution. 
+	
+\begin{tabular}{ccccc}
+& & $(\beta=0.5,\gamma=1)$ & $(\beta=1,\gamma=1)$ &\\
+Seeds & \includegraphics[scale=0.25]{images/segmentation/coala/seeds.png} & 
+		\includegraphics[scale=0.25]{images/segmentation/coala/r3_lg0_sq05_dt1_it20.png} & 
+		\includegraphics[scale=0.25]{images/segmentation/coala/r3_lg0_sq1_dt1_it50.png}	&
+		$r=3$\\
+Only data & \includegraphics[scale=0.25]{images/segmentation/coala/r3_lg0_sq0_dt1_it20.png} & 
+		\includegraphics[scale=0.25]{images/segmentation/coala/r7_lg0_sq05_dt1_it20.png} &
+		\includegraphics[scale=0.25]{images/segmentation/coala/r7_lg0_sq1_dt1_it20.png} &
+		$r=7$\\
+\end{tabular}	
+	
+
 
 \begin{itemize}
     \item{Influence of terms as data fidelity and length; }
