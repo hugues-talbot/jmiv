@@ -669,6 +669,7 @@ We present an application of the digital flow described in the previous section 
 	
 	Notice that data and length terms are defined in such a way in order to comply with algorithm \ref{alg:evolution-model}, in which we take the complement of the optimal solution. 
 	
+\begin{figure}
 \begin{tabular}{ccccc}
 & & $(\beta=0.5,\gamma=1)$ & $(\beta=1,\gamma=1)$ &\\
 Seeds & \includegraphics[scale=0.25]{images/segmentation/coala/seeds.png} & 
@@ -680,16 +681,45 @@ Only data & \includegraphics[scale=0.25]{images/segmentation/coala/r3_lg0_sq0_dt
 		\includegraphics[scale=0.25]{images/segmentation/coala/r7_lg0_sq1_dt1_it20.png} &
 		$r=7$\\
 \end{tabular}	
-	
+\caption{Influence of parameters in the segmentation.}
+\label{fig:parameters-influence}
+\end{figure}
+
+\begin{figure}
+	\begin{minipage}[b]{0.32\textwidth}
+		\center
+		\includegraphics[scale=0.2]{images/segmentation/tiger1/gc-seg.png}
+		\includegraphics[scale=0.2]{images/segmentation/tiger1/corrected-seg.png}		
+	\end{minipage}\hspace{5pt}%
+	\begin{minipage}[b]{0.32\textwidth}
+		\center	
+		\includegraphics[scale=0.2]{images/segmentation/snake/gc-seg.png}
+		\includegraphics[scale=0.2]{images/segmentation/snake/corrected-seg.png}		
+	\end{minipage}\hspace{5pt}%	
+	\begin{minipage}[b]{0.32\textwidth}
+		\center	
+		\includegraphics[scale=0.2]{images/segmentation/man/gc-seg.png}
+		\includegraphics[scale=0.2]{images/segmentation/man/corrected-seg.png}		
+	\end{minipage}%		
+	\label{fig:segmentation-results}
+	\caption{Examples of segmentations.}
+\end{figure}
 
 
-\begin{itemize}
-    \item{Influence of terms as data fidelity and length; }
-	\item{\todo{Comparison with Schoenemman method for images in database XXX; }}
-	\item{\todo{Quantitative analysis}}
-	\item{\todo{Try on ISIC2018, skin lesions database}}
-\end{itemize}
+\begin{figure}
+	\center
+	\subfloat{
+		\includegraphics[scale=0.2]{images/segmentation/penguin/1/gc-seg.png}
+	}%
+	\subfloat{
+		\includegraphics[scale=0.2]{images/segmentation/penguin/1/corrected-seg.png}			
+	}%
+	\subfloat{
+		\includegraphics[scale=0.2]{images/segmentation/penguin/2/corrected-seg.png}			
+	}%	
+\end{figure}
 
+Average of 3s per iteration. Average of 20 iterations. We optimize over a single band (inner pixel boundary).
 
 \section{Final remarks}
 

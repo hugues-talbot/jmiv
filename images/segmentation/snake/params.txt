@@ -1,0 +1,2 @@
+$BC_APP /home/daniel/Desktop/bc/selected-seeds/175043/gc-cut.obj -r3 -d15 -i40 -q1.0 -t1.0 -g0 -o /home/daniel/Desktop/bc/selected-results/new-results/175043 -v
+

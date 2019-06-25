@@ -1,0 +1,2 @@
+$BC_APP /home/daniel/Desktop/bc/selected-seeds/new-seeds/160068/gc-object.xml -r3 -d6 -i40 -q1.0 -t1.0 -g0 -o /home/daniel/Desktop/bc/selected-results/new-results/160068 -v
+
