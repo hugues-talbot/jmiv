@@ -739,22 +739,25 @@ We present an application in supervised image segmentation for the digital evolu
 The algorithm can be initialized by a collection of compact sets, or with the result of a third-party segmentation algorithm, as GrabCut \cite{rother04grabcut}. We include an additional parameter $d$ that dilates the initial sets before executing the flow.
 	
 \begin{figure}
-\begin{tabular}{ccccc}
-& & $(\beta=0.5,\gamma=1)$ & $(\beta=1,\gamma=1)$ &\\
-Seeds & \includegraphics[scale=0.25]{images/segmentation/coala/seeds.png} & 
-		\includegraphics[scale=0.25]{images/segmentation/coala/r3_lg0_sq05_dt1_it20.png} & 
-		\includegraphics[scale=0.25]{images/segmentation/coala/r3_lg0_sq1_dt1_it50.png}	&
-		$r=3$\\
-GrabCut & \includegraphics[scale=0.25]{images/segmentation/coala/r3_lg0_sq0_dt1_it20.png} & 
-		\includegraphics[scale=0.25]{images/segmentation/coala/r7_lg0_sq05_dt1_it20.png} &
-		\includegraphics[scale=0.25]{images/segmentation/coala/r7_lg0_sq1_dt1_it20.png} &
-		$r=7$\\
+\center
+\begin{tabular}{ccc}
+Seeds & $(\alpha=0, \beta=0.5)$ & $(\alpha=0,\beta=1)$ \\
+ 	\includegraphics[scale=0.25]{images/segmentation/coala/seeds.png} & 
+	\includegraphics[scale=0.25]{images/segmentation/coala/r3/lg0_sq05_dt1_it50.png} & 
+	\includegraphics[scale=0.25]{images/segmentation/coala/r3/lg0_sq1_dt1_it50.png} \\
+	
+ 	\includegraphics[scale=0.25]{images/segmentation/coala/lg0_sq0_dt1_it20.png} & 
+	\includegraphics[scale=0.25]{images/segmentation/coala/r3/lg1_sq0_dt1_it50.png} &
+	\includegraphics[scale=0.25]{images/segmentation/coala/r3/lg2_sq0_dt1_it50.png} \\
+
+	GrabCut & $(\alpha=0.5, \beta=0)$ & $(\alpha=1, \beta=0)$
 \end{tabular}	
-\caption{Influence of squared curvature weight $(\beta)$ with respect the data term weight $(\gamma)$ for different estimation ball radius.}
+\caption{Comparison of squared curvature regularization (first row) and length regularization (second row). }
 \label{fig:parameters-influence}
 \end{figure}
 
 \begin{figure}
+	\center
 	\begin{tabular}{ccc}
 		GrabCut & Contour Correction & Schoenemann\\
 		\includegraphics[scale=0.2]{images/segmentation/tiger1/gc-seg.png} &
