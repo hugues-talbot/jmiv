@@ -65,6 +65,47 @@ CentraleSupelec Inria \'equipe OPIS, Universit\'e Paris-Saclay, 9 rue Joliot-Cur
 	\item{Outline: We present two models that illustrate how digital estimators can be used to minimize the elastica energy on digital sets.  }
 	\item{\todo{Add related works : geometric priors, binary segmentation, other digital curve evolution models}}
 	\item{\todo{Talk about Willmore flow with phase field or with threshold dynamics}}
+	
+	\item{\textbf{Classical work on elastica and Wilmore flow in imaging}}
+	\begin{itemize}
+		\item{Level lines based disocclusion \cite{masnou98inpainting} }	
+		\item{Filling-In by Joint Interpolation of Vector Fields and Gray Levels \cite{ballester01filljoint} }
+		\item{Eulers Elastica and Curvature Based Inpaintings \cite{chan02elasticainpainting} }
+		\item{Discrete willmore flow \cite{bobenko2005discrete}}
+		\item{Introducing Willmore flow into level set segmentation of spinal vertebrae \cite{lim2012introducing}}	
+	\end{itemize}
+
+	\item{\textbf{Level-sets}}
+	\begin{itemize}
+		\item{Image processing via level set curvature flow \cite{malladi1995image} }
+		\item{Shape Modeling with Front Propagation: A Level Set Approach \cite{malladi1995shape} }	
+	\end{itemize}	
+
+		\item{\textbf{Convex relaxation}}
+	\begin{itemize}
+			\item{A convex lower semicontinuous approximation of Eulers elastica energy \cite{bredies15convex}}				\item{Introducing Total Curvature for Image Processing \cite{goldluecke11totalcurvature}}
+	\end{itemize}	
+	
+	\item{\textbf{Constraint optimization}}
+	\begin{itemize}
+		\item{Curvature regularity for region-based image segmentation and inpainting: A linear programming relaxation \cite{schoenemann09linear} }	
+		\item{A Fast Algorithm for Euler's Elastica Model Using Augmented Lagrangian Method \cite{tai11elastica} }		
+		\item{The elastic ratio: Introducing curvature into ratio-based image segmentation \cite{schoenemann2011elastic} }		
+		\item{Curvature Regularization for Curves and Surfaces in a Global Optimization Framework \cite{strandmark11globalframework} }
+	\end{itemize}
+
+	\item{\textbf{Discrete approaches}}
+	\begin{itemize}
+		\item{Fast global optimization of curvature \cite{zehiry10fast}	}
+		\item{Efficient Squared Curvature \cite{nieuwenhuis14efficient} 	}
+		\item{Contrast driven {E}lastica for image segmentation \cite{el2016contrast} }	
+	\end{itemize}
+	
+	
+
+
+
+	
 \end{itemize}
 
 \section{Multigrid convergent estimators \todo{(Mostly copy/paste)}}
@@ -124,7 +165,7 @@ ones. In the next section, we describe two estimators that are important for our
 \subsection{Tangent and Perimeter Estimators}
 
 The literature presents several perimeter estimators that are multigrid convergent (see
-\cite{coeurjolly04,coeurjolly12} for a review), but in order to define the digital elastica we need a local estimation
+\cite{coeurjolly04comparative,coeurjolly12multigrid} for a review), but in order to define the digital elastica we need a local estimation
 of length and we wish that integration over these local length elements gives a multigrid convergent estimator for the
 perimeter.
 
@@ -136,7 +177,7 @@ perimeter.
   where $or(e)$ denotes the grid edge orientation.
 \end{definition}
 The integration of the elementary length along the digital curve is a multigrid convergent estimator for perimeter if
-one uses the $\lambda$-MST \cite{lachaud07} tangent estimator (see \cite{lachaud06}).
+one uses the $\lambda$-MST \cite{lachaud07tangent} tangent estimator (see \cite{lachaud06hdr}).
 
 \subsection{Integral Invariant Curvature Estimator}
 Generally, an invariant $\sigma$ is a real-valued function from some space $\Omega$ which value is unaffected by the action
@@ -146,7 +187,7 @@ of some group $\mathfrak{G}$ on the elements of the domain
 \end{align*}
 Perimeter and curvature are examples of invariants for shapes on $\mathbb{R}^2$ with respect to the euclidean group
 (rigid transformations). Definition of integral area invariant and its one-to-one correspondence with curvature is
-proven in \cite{manay04}.
+proven in \cite{manay04intinvariant}.
 
 
 \begin{definition}[Integral area invariant]
@@ -161,7 +202,7 @@ proven in \cite{manay04}.
 
 The value $\sigma_{X,r}(p)$ is the intersection area of ball $B_r(p)$ with shape $X$. By locally approximating the shape
 at point $p \in X$, one can rewrite the intersection area $\sigma_{X,r}(p)$ in the form of the Taylor expansion
-\cite{pottman09}
+\cite{pottman09intinvariant}
 	
 \begin{align*}
   \sigma_{X,r}(p) = \frac{\pi}{2}r^2 - \frac{\kappa(X,p)}{3}r^3 + O(r^4),
@@ -185,7 +226,7 @@ Such an approximation is convenient as one can simply devise a multigrid converg
   \end{align}
 \end{definition}
 	
-In \cite{coeurjolly13}, the authors combine the approximation\eqref{eq:curvature_approximation} and digital estimator
+In \cite{coeurjolly13integral}, the authors combine the approximation\eqref{eq:curvature_approximation} and digital estimator
 \eqref{eq:digital_estimator_area} to define a multigrid convergent estimator for the curvature.
 
 \begin{definition}[Integral Invariant Curvature Estimator]
@@ -225,7 +266,7 @@ elastica energy. The idea is to define a neighborhood of shapes
 $\mathcal{N}_i$ to the shape $S_i$ and choose the element of
 $\mathcal{N}_i$ with lowest energy.  The process is suited for the
 integral invariant estimator but also for other curvature estimators,
-for example, MDCA \cite{roussillon11}.
+for example, MDCA \cite{roussillon11mdca}.
 
 Let $S$ be a $2$-dimensional digital shape. We adopt the cellular-grid model to represent $S$, i.e., pixels and its lower dimensional counterparts, linels and pointels, are part of $S$. In particular, we denote by $\partial S$ the topological boundary of $S$, i.e., the connected sequence of linels such that for each linel we have one of its incident pixels in $S$ and the other not in $S$.
 
@@ -622,14 +663,14 @@ Let $F$ be a function of $n$ binary variables, i.e.
 F(y_1,\cdots, y_n) = \sum_{i}{F_i(y_i)} + \sum_{i < j}{F_{i,j}(y_i,y_j)}
 \end{align*}
 
-Function $F$ is submodular if and only if the following inequality holds for each pairwise term $F_{i,j}$ \cite{kolmogorov04}
+Function $F$ is submodular if and only if the following inequality holds for each pairwise term $F_{i,j}$ \cite{kolmogorov04whatenergies}
 
 \begin{align*}
 	\quad F_{i,j}(0,0) + F_{i,j}(1,1) \leq F_{i,j}(0,1) + F_{i,j}(1,0)
 \end{align*}
 
 Energy $E_m$ is non-submodular and optimizing it is a difficult problem, which
-constrained us to use heuristics and approximation algorithms. The QPBO method \cite{rother07} transforms the
+constrained us to use heuristics and approximation algorithms. The QPBO method \cite{rother07qpbo} transforms the 
 original problem in a max-flow/min-cut formulation and returns a full optimal labeling for submodular energies. For
 non-submodular energies the method is guaranteed to return a partial labeling with the property that the set of labeled
 variables is part of an optimal solution. That property is called partial optimality.
@@ -695,7 +736,7 @@ We present an application in supervised image segmentation for the digital evolu
  \caption{Contour correction algorithm.}
 \end{algorithm}	
 
-The algorithm can be initialized by a collection of compact sets, or with the result of a third-party segmentation algorithm, as GrabCut \cite{rother04}. We include an additional parameter $d$ that dilates the initial sets before executing the flow.
+The algorithm can be initialized by a collection of compact sets, or with the result of a third-party segmentation algorithm, as GrabCut \cite{rother04grabcut}. We include an additional parameter $d$ that dilates the initial sets before executing the flow.
 	
 \begin{figure}
 \begin{tabular}{ccccc}
@@ -745,7 +786,7 @@ GrabCut & \includegraphics[scale=0.25]{images/segmentation/coala/r3_lg0_sq0_dt1_
 	}%	
 \end{figure}
 
-We evaluate our method using the BSD300 database \cite{martinFTM01}. All images contains the same number of pixels, the resolution being 321x481 in portrait mode. We compare the results of our method with segmentations given by GrabCut and Schoenemanns's method \cite{schoenemann09}. We report an average of $3s$ per flow iteration, and an average of $30$ iterations per image. While GrabCut executes in less than one second, Schoenemann's method may take $2$ hours to complete.
+We evaluate our method using the BSD300 database \cite{martinFTM01berkeley}. All images contains the same number of pixels, the resolution being 321x481 in portrait mode. We compare the results of our method with segmentations given by GrabCut and Schoenemanns's method \cite{schoenemann09linear}. We report an average of $3s$ per flow iteration, and an average of $30$ iterations per image. While GrabCut executes in less than one second, Schoenemann's method may take $2$ hours to complete.
 
 \section{Final remarks}\label{sec:final-remarks}
 
