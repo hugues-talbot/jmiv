@@ -317,20 +317,13 @@ Given closed curves $C_1,C_2$ with same orientation, its set of $n$-glued curves
 \end{align*}
 \end{definition}
 
-It is easy to check that any two glued curves $g_1,g_2$ can be combined as long as its $C_2$ segments do not intersect. We denote $\mathcal{G}_{n,k}(C_1,C_2)$  the set of all $k$-combined $n$-glued curves. \jaco{(Is it useful if afterwards you never combine glued curves, ie $k=1$ after ?)} Finally, we define
+Let $S_O = \partial ( S \setminus R_1^-(S) ) $ and $S_I = \partial ( S \cup R_1^+(S) )$, the neighborhood set to shape $S$ is defined as
 
 \begin{align*}
-	\mathcal{G}(C_1,C_2) = \bigcup_{n,k}{\mathcal{G}_{n,k}(C_1,C_2) }
+	\mathcal{N}(S,N) = \bigcup_{1 \leq n \leq N} int \big( \; \mathcal{G}_{n}(\partial S, S_I) \;\big) \cup int \big( \; \mathcal{G}_{n}(\partial S, S_O) \; \big),
 \end{align*}
 
-
-The parameters $n,k$ are used to parameterize the neighborhood set. Let $S_O = \partial ( S \setminus R_1^-(S) ) $ and $S_I = \partial ( S \cup R_1^+(S) )$, the neighborhood set to shape $S$ is defined as
-
-\begin{align*}
-	\mathcal{N}(S,N,k) = \bigcup_{1 \leq n \leq N} int \big( \; \mathcal{G}_{n,k}(\partial S, S_I) \;\big) \cup int \big( \; \mathcal{G}_{n,k}(\partial S, S_O) \; \big),
-\end{align*}
-
-where $int(C)$ is the interior of the shape bounded by oriented curve $C$. Algorithm~\ref{alg:local-search} describes the local combinatorial process and Figure~\ref{fig:local-comb-square-results} presents the digital curve evolution when executing this algorithm for two different shapes with $k=1$ and $N=20$.
+where $int(C)$ is the interior of the shape bounded by oriented curve $C$. Algorithm~\ref{alg:local-search} describes the local combinatorial process and Figure~\ref{fig:local-comb-square-results} presents the digital curve evolution when executing this algorithm for two different shapes with $N=20$.
 
 
 \begin{algorithm}
@@ -341,11 +334,11 @@ where $int(C)$ is the interior of the shape bounded by oriented curve $C$. Algor
  \SetKwData{Best}{best} 
  \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
  
- \Input{A digital set $S$; the number of junctions $k$ to use; the maximum length of glued curves $N$; the maximum number of iterations \MIt; and a stop condition \Tol}
+ \Input{A digital set $S$; the maximum length of glued curves $N$; the maximum number of iterations \MIt; and a stop condition \Tol}
  \BlankLine
  \Delta $\longleftarrow$ \Tol+1\;
  \While{ \It $<$ \MIt \bf{and} \Delta $>$ \Tol  }{
-  	\For{$ X \in \mathcal{N}(S_i,N,k) $}
+  	\For{$ X \in \mathcal{N}(S_i,N) $}
 	{
 		\If{ $\hat{E}(X)$ $<$ $\hat{E}(X^\star)$ }
 		{
@@ -430,7 +423,7 @@ Flower & 6946s (87s/it)  & 66376s (593s/it)\\
 	Let $\Omega_C$ be the collection of connected digital sets in $\Omega$. Given a digital shape $S$, we wish to evolve it into a shape $S^\star$ similar to $S$ but with lower digital elastica energy. We recall the digital curvature estimator definition
 	
 \begin{align}
-	\hat{\kappa}^2(y) &= c1\Big( c2 - \sum_{x_i \in B_r(y) \cap S}{x_i} \Big)^2, 
+	\hat{\kappa}^2(y) &= c_1\Big( c_2 - \sum_{x_i \in B_r(y) \cap S}{x_i} \Big)^2, 
 	\label{eq:curvature-estimator-pixels}
 \end{align}
 
@@ -636,22 +629,12 @@ In our experiments, the best results are obtained by executing DCE algorithm wit
 
 \begin{figure}[!ht]
 \center
-\begin{minipage}[b]{0.5\textwidth}
-\center
-\subfloat{%
-		\includegraphics[scale=0.75]{images/flow/faster-high-curvature/0000.png}}%%1
-		\vspace{15pt}
-		\subfloat{%
-		\includegraphics[scale=0.75]{images/flow/faster-high-curvature/0005.png}}%
-\end{minipage}%
-\begin{minipage}[b]{0.5\textwidth}
-\center
-\subfloat{%
+\subfloat[]{%
+	\includegraphics[scale=0.5]{images/flow/faster-high-curvature/summary_flow.eps}}\\%
+\subfloat[]{%
 		\includegraphics[scale=0.25]{images/flow/fill-holes/summary_flow.eps}}%%1
-\end{minipage}
-
 \label{fig:mx-speed-variation-hole-filling}
-\caption{High curvature regions evolves faster than lower ones (a). The flow can handle holes. }
+\caption{High curvature regions evolves faster than lower ones (a). The flow can handle holes (b). }
 \end{figure}
 
 
@@ -769,7 +752,7 @@ GrabCut & \includegraphics[scale=0.25]{images/segmentation/coala/r3_lg0_sq0_dt1_
 		\includegraphics[scale=0.2]{images/segmentation/vase/corrected-seg.png} &					\includegraphics[scale=0.2]{images/segmentation/schoenemann/vase/vase-seg.png}		
 	\end{tabular}
 	\label{fig:segmentation-results}
-	\caption{The proposed method regularizes grab-cut contours and in some occasions is able to improve the original segmentation returning meaningful results. We can observe the completion behaviour of curvature in the segmentation of the snake in the second row, and we don't suffer from oversegmentation issues as Schoenemann's method. However, our flow may stop in a local optima as in the fourth row, while Schoenemann's is able to extrapolate such solutions.}
+	\caption{The proposed method regularizes grabcut contours and in some occasions is able to improve the original segmentation returning meaningful results. We can observe the completion behaviour of curvature in the segmentation of the snake in the second row, and we don't suffer from oversegmentation issues as Schoenemann's method. However, our flow may stop in a local optima as in the fourth row, while Schoenemann's is able to extrapolate such solutions.}
 \end{figure}
 
 
