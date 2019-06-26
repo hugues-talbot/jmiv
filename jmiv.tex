@@ -218,7 +218,7 @@ We are going to use the digital version of the energy, using multigrid convergen
 
 \section{Local combinatorial optimization}
 
-The objectives of this section is to show both the potential of minimizing a purely digital Elastica energy but also to underline the difficulties of using it as is in a global combinatorial optimization framework.
+The objectives of this section is to show both the potential of minimizing a purely digital Elastica energy but also to underline the difficulties of using it in a global combinatorial optimization framework.
 
 Given a digital shape $S_0$ we describe a process that generates a sequence $(S_i)$ of shapes with non-increasing
 elastica energy. The idea is to define a neighborhood of shapes
@@ -322,11 +322,6 @@ where $int(C)$ is the interior of the shape bounded by oriented curve $C$. Algor
 		
 \begin{figure}[!ht]
 \center
-
-\begin{minipage}[b]{0.5\textwidth}
-\includegraphics[scale=0.3]{images/local_search/square/graph.eps}
-\end{minipage}
-\begin{minipage}[b]{0.45\textwidth}
 	\subfloat[\label{}]{%
 	\includegraphics[scale=0.125]{images/local_search/square/h1.0/summary_flow.eps}
 	}%
@@ -336,13 +331,14 @@ where $int(C)$ is the interior of the shape bounded by oriented curve $C$. Algor
 	}%
 	\hspace{10pt}
 	\subfloat[\label{}]{%
-	\includegraphics[scale=0.125]{images/local_search/square/h1.0/summary_flow.eps}
+		\textbf{Missing figure}
+	%\includegraphics[scale=0.125]{images/local_search/square/h1.0/summary_flow.eps}
 	}%
 	\hspace{10pt}
 	\subfloat[\label{}]{%
-	\includegraphics[scale=0.125]{images/local_search/square/h0.5/summary_flow.eps}
+	\textbf{Missing figure}
+	%\includegraphics[scale=0.125]{images/local_search/square/h0.5/summary_flow.eps}
 	}%
-\end{minipage}		
 		\caption{Local combinatorial optimization process results for the square and flower shapes. Grid step $1.0$ in (a),(c) and $0.5$ in (b),(d).}	
 		\label{fig:local-comb-square-results}
 \end{figure}
@@ -366,7 +362,8 @@ next section, we explore a more efficient approach.
 \begin{figure}
 \begin{minipage}[b]{0.5\textwidth}
 \center
-\includegraphics[scale=0.35]{images/local_search/square/graph.eps}
+%\includegraphics[scale=0.35]{images/local_search/square/graph.eps}
+	\textbf{Missing figure}
 \caption{Elastica computation along iterations of algorithm \ref{alg:local-search}}
 \label{fig:plot-elastica-local-search}
 \end{minipage}\hspace{40pt}%
@@ -389,7 +386,7 @@ Flower & 6946s (87s/it)  & 66376s (593s/it)\\
 
 \section{Digital Curvature Flow}
 
-	Let $\Omega_C$ the collection of digital connected digital sets in $\Omega$. Given a digital shape $S$, we wish to evolve it into a shape $S^\star$ similar to $S$ but with lower digital elastica energy. We recall the digital curvature estimator definition
+	Let $\Omega_C$ be the collection of connected digital sets in $\Omega$. Given a digital shape $S$, we wish to evolve it into a shape $S^\star$ similar to $S$ but with lower digital elastica energy. We recall the digital curvature estimator definition
 	
 \begin{align}
 	\hat{\kappa}^2(y) &= c1\Big( c2 - \sum_{x_i \in B_r(y) \cap S}{x_i} \Big)^2, 
@@ -408,7 +405,7 @@ where $c_1=3/r^6$ and $c_2=\pi r^2/2$. Let $X,Y$ be the set of pixels and linels
 
 where $F$ is some measure of similarity, e.g. distance, between initial shape $S$ and candidate solution. Such term is needed, otherwise the uninteresting empty set would be the optimal solution.
 
-Formulation \eqref{eq:general-binary-formulation} is of order four, binary and non-convex. These properties make it a hard optimization problem. We are going to explore an alternative energy, which is a simplification of the former. In section (...) we comment our attempts in optimizing  other variations of \eqref{eq:general-binary-formulation}.
+Formulation \eqref{eq:general-binary-formulation} is of order four, binary and non-convex. These properties make it a hard optimization problem. We are going to explore an alternative energy, which is a simplification of the former. In section \ref{sec:final-remarks} we comment our attempts in optimizing  other variations of \eqref{eq:general-binary-formulation}.
 
 \subsection{A first model}
 
@@ -426,20 +423,21 @@ where $\mathcal{N}_4(x)$ denotes the $4$-adjacent neighbor set of $x$ (without $
 
 In other words, each flow iteration decides which pixels in the inner boundary are to be removed and which are to be kept. To simplify notation, we denote the optimization region of $S_i$ as $O_i$. We define the foreground set $F_i = S_i \setminus O_i$.
 
-In order to be symmetric, the curvature at some linel $y$ is computed on along $R_m(S)$. We define $O_{r,i}(y) = O_i \cap B_r(y)$ and an analogous definition holds for $F_{r,i}(y)$. Expanding \eqref{eq:curvature-estimator-pixels}, we get 
+In order to be symmetric, the curvature at some linel $y$ is computed on $R_m(S)$. We define $O_{r,i}(y) = O_i \cap B_r(y)$ and an analogous definition holds for $F_{r,i}(y)$. Expanding \eqref{eq:curvature-estimator-pixels}, we get 
 
 	\begin{align*}
-		\hat{\kappa}^2(y) &= c_1\Big( c_2 - \sum_{x_i \in B_r(y)} \big( {x_i} + |F_{r,i}(y)| \big) \Big)^2 \\
-		\hat{\kappa}_{r}^2(y) &= c_1 \cdot \Big( C + 2\left( |F_{r,i}(y)| - c_2 \right) \sum_{x_i \in O_{r,i}(y)}{x_i} + \sum_{x_i \in O_{r,i}(y)}{x_i^2} + \sum_{ \substack{x_i,x_j \in O_{r,i}(p) \\ i<j} }{2x_ix_j}  \Big),
+		\hat{\kappa}^2(y) &= c_1\Big( c_2 - \sum_{x_j \in B_r(y)} \big( {x_j} + |F_{r,i}(y)| \big) \Big)^2 \\
+		\hat{\kappa}_{r}^2(y) &= c_1 \cdot \Big( C + 2\left( |F_{r,i}(y)| - c_2 \right) \sum_{x_j \in O_{r,i}(y)}{x_j} + \sum_{x_j \in O_{r,i}(y)}{x_j^2} + \sum_{ \substack{x_j,x_k \in O_{r,i}(p) \\ j<k} }{2x_jx_k}  \Big),
 	\end{align*}
 	
-	where $C=c_2^2 - 2c_2 \cdot |F_{r,i}(y)| + |F_{r,i}(y)|^2$. We proceed by minimizing the sum of squared curvatures along the boundary of the current shape. By ignoring constants and multiplication factors and using the binary character of the variables, we define the following family of energies
+	where $C=c_2^2 - 2c_2 \cdot |F_{r,i}(y)| + |F_{r,i}(y)|^2$. We proceed by minimizing the sum of squared curvatures along $R_m(S)$. By ignoring constants and multiplication factors and using the binary character of the variables, we define the following family of energies
 	
-	\begin{align*}
-		E_m(X,S) = \sum_{y \in R_m(S_i)}{ \Big( { (1/2+ |F_{r,i}(y)|-c_2) \cdot \sum_{x_i \in O_{r,i}(y)}{x_i} } + \sum_{ \substack{x_i,x_j \in O_{r,i}(y) \\ i<j} }{x_ix_j} \Big) }.
-	\end{align*}
+	\begin{align}
+		E_m(X,S) = \sum_{y \in R_m(S_i)}{ \Big( { (1/2+ |F_{r,i}(y)|-c_2) \cdot \sum_{x_j \in O_{r,i}(y)}{x_j} } + \sum_{ \substack{x_j,x_k \in O_{r,i}(y) \\ j<k} }{x_jx_k} \Big) }.
+		\label{eq:energy-family}
+	\end{align}
 	
-	Each choice of $m$ generates a different flow, which is generaly described in algorithm \ref{alg:evolution-model}.
+	Each choice of $m$ generates a different flow, which is generaly described in the DCE algorithm \ref{alg:evolution-model}.
 
 
 
@@ -470,7 +468,7 @@ In order to be symmetric, the curvature at some linel $y$ is computed on along $
 	
  }
  \label{alg:evolution-model} 
- \caption{Digital curvature evolution model.}
+ \caption{Digital curvature evolution algorithm (DCE).}
 \end{algorithm}
 
 
@@ -497,23 +495,23 @@ The same reasoning applies for non-convex parts. Indeed, concave regions are con
 \end{table}
 
 
-In figure \ref{fig:m1-square-flow} we see some results for algorithm \ref{alg:evolution-model} with $m=1$. We observe a global movement towards roundness, but with several artifacts. We minimize the effects of a jaggy boundary by including a length penalization, weighed by coefficient $\beta$. Nonetheless, a higher estimation ball radius creates unstable shapes. In fact, the estimator is very sensitive in regions of low squared curvature, and its precisely in those regions which spurious pixels are included.
+In figure \ref{fig:m1-square-flow} we see some results for the DCE algorithm  with $m=1$. We observe a global movement towards roundness, but with several artifacts. We minimize the effects of a jaggy boundary by including a length penalization, weighted by some coefficient $\alpha$. Nonetheless, a higher estimation ball radius creates unstable shapes. In fact, the estimator is very sensitive in regions of low squared curvature, and its precisely in those regions which spurious pixels are included.
 
 
 \begin{figure}[!ht]
 \center
 \begin{minipage}[b]{0.33\textwidth}
-	\subfloat[$r=3, \beta=0$\label{}]{%
+	\subfloat[$r=3, \alpha=0$\label{}]{%
 	\includegraphics[scale=0.2]{images/flow/length-radius-effect/triangle-r3-nolength/summary_flow.eps}
 	}%
 \end{minipage}%
 \begin{minipage}[b]{0.33\textwidth}
-	\subfloat[$r=3, \beta=0.15$\label{}]{%
+	\subfloat[$r=3, \alpha=0.15$\label{}]{%
 	\includegraphics[scale=0.2]{images/flow/length-radius-effect/triangle-r3-length0.15/summary_flow.eps}
 	}%
 \end{minipage}%
 \begin{minipage}[b]{0.33\textwidth}
-	\subfloat[$r=5, \beta=0.15$\label{}]{%
+	\subfloat[$r=5, \alpha=0.15$\label{}]{%
 	\includegraphics[scale=0.2]{images/flow/length-radius-effect/triangle-r5/summary_flow.eps}
 	}%
 \end{minipage}%
@@ -524,7 +522,9 @@ In figure \ref{fig:m1-square-flow} we see some results for algorithm \ref{alg:ev
 
 \subsection{A more stable model}
 
-In the previous section we notice that the algorithm produces shapes with many artifacts due to the sensitiveness of the estimator on regions of low squared curvature. We argue that, evaluating the estimation ball along farther ring sets we skip those sensitive areas and we focus the optimization process only on those regions of highest squared curvature value. 
+In the previous section we notice that the algorithm produces shapes with many artifacts due to the sensitiveness of the estimator on regions of low squared curvature. We argue that, evaluating the estimation ball along farther ring sets we skip those sensitive areas by focusing the optimization process only on those regions of highest squared curvature value. 
+
+\jaco{Motivation in digital geometry of why it makes sense to compute things farther.}
 
 
 
@@ -550,7 +550,7 @@ In the previous section we notice that the algorithm produces shapes with many a
 \caption{By positioning the estimation ball on farther rings, we minimize artifacts creation. }
 \end{figure}
 
-In our experiments, the best results are obtained by executing algorithm \ref{alg:evolution-model} with $m=r$, where $r$ is the estimation ball radius. In plot \ref{fig:mx-elastica-plots} we observe how the elastica evolves along the iterations. If the radius is too large, the elastica increases starting from a critical point $p$. That's what happens for the triangle, in which the flow converges to a single point.
+In our experiments, the best results are obtained by executing DCE algorithm with $m=r$, where $r$ is the estimation ball radius. In plot \ref{fig:mx-elastica-plots}, we observe how the elastica evolves along the iterations. If the radius is too large, the elastica increases starting from a critical point $p$. That's what happens for the triangle, in which the flow converges to a single point.
 
 
 \begin{figure}[!ht]
@@ -628,7 +628,7 @@ Function $F$ is submodular if and only if the following inequality holds for eac
 	\quad F_{i,j}(0,0) + F_{i,j}(1,1) \leq F_{i,j}(0,1) + F_{i,j}(1,0)
 \end{align*}
 
-Energy \eqref{eq:curvature_highlighting_simplified} is non-submodular and optimizing it is a difficult problem, which
+Energy $E_m$ is non-submodular and optimizing it is a difficult problem, which
 constrained us to use heuristics and approximation algorithms. The QPBO method \cite{rother07} transforms the
 original problem in a max-flow/min-cut formulation and returns a full optimal labeling for submodular energies. For
 non-submodular energies the method is guaranteed to return a partial labeling with the property that the set of labeled
@@ -637,16 +637,17 @@ variables is part of an optimal solution. That property is called partial optima
 In practice, QPBO can leave many pixels unlabeled. There exist two extensions of QPBO that ameliorate this limitation: QPBOI
 (improve) and QPBOP (probe). The first is an approximation method that is guaranteed to not increase the energy, but we
 lost the property of partial optimality. The second is an exact method which is reported to label more variables than
-QPBO. We use QPBOP. The extended computation region also regularizes the energy and we have checked that it induces a
-higher number of labeled variables.
+QPBO. 
+
+Lower is $m$ in $E_m$, higher is the number of unlabeled pixels. In fact, in the case of $m=r$, the number of unlabeled pixels goes to zero after few iterations and QPBOP and QPBOI returns virtually the same labeling. That is expected, as we move farther from the optimization region, the number of pairwise components in $E_m$ decreases.
 
 
 \section{Application in image segmentation}
 
-We present an application of the digital flow described in the previous section for supervised image segmentation. We include a data fidelity and length penalization terms in the energy. At iteration $k$, we minimize the following energy
+We present an application in supervised image segmentation for the digital evolution described in the previous section. We include a data fidelity $g(\cdot)$ and a length penalization $s(\cdot)$ terms in energy $E_m$. At iteration $i$, we minimize
 
 \begin{align}			
-	\min_{Y_k} \sum_{y \in Y_k}{\left( \alpha \cdot s(y) + \gamma \cdot g(y) \right)} + \beta \cdot \sum_{y \in R_r(S_k)}{\hat{\kappa}_{r}^2(y)}.
+	\min_{Y_i} \sum_{y \in Y_i}{\Big( \gamma \cdot g(y) + \alpha \cdot s(y) \Big)} + \sum_{y \in R_r(S_i)}{ \beta \cdot \hat{\kappa}_{r}^2(y)}.
 	\label{eq:boundary-correction-energy}
 \end{align}
 	
@@ -654,9 +655,9 @@ We present an application of the digital flow described in the previous section 
 	
 	
 	\begin{align*}
-		s(y)=\sum_{y_i \in \mathcal{N}_4(y)}{ t(y_i) }, \quad \text{where } t(y_i) = \left\{\begin{array}{ll}
-		(y-y_i)^2, & \text{if } y_i \in O_{r,i}\\
-		(y-0), & \text{if } y_i \in F_{r,i}\\
+		s(y)=\sum_{y_j \in \mathcal{N}_4(y)}{ t(y_j) }, \quad \text{where } t(y_j) = \left\{\begin{array}{ll}
+		(y-y_j)^2, & \text{if } y_j \in O_{r,i}\\
+		(y-0), & \text{if } y_j \in F_{r,i}\\
 		(y-1), & \text{otherwise }
 		\end{array}\right.
 	\end{align*}
@@ -664,10 +665,37 @@ We present an application of the digital flow described in the previous section 
 	Given foreground and background seeds selected by the user, we derive mixed gaussian distributions  of color intensities $G_f$ and $G_b$, and we define the data fidelity term as
 	
 	\begin{align*}
-		g(y) = -(1-y)\log{G_f(I(y))} - (y)\log{G_b(I(y))}
+		g(y) = -(1-y)\log{G_f(I(y))} - y\log{G_b(I(y))}
 	\end{align*}
 	
-	Notice that data and length terms are defined in such a way in order to comply with algorithm \ref{alg:evolution-model}, in which we take the complement of the optimal solution. 
+	Notice that data and length terms are defined in such a way in order to comply with DCE algorithm, in which we take the complement of the optimal solution. 
+	
+	
+\begin{algorithm}[H]
+ \SetKwData{It}{i}
+ \SetKwData{MIt}{maxIt}
+ \SetKwData{Tol}{tolerance}
+ \SetKwData{Delta}{delta}
+ \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+ \SetKwComment{comment}{//}{}
+ 
+ \Input{An image $I$; seed mask $M$; The estimation ball radius $r$; data $(\gamma)$, length $(\alpha)$ and squared curvature $(\beta)$ weights; initial dilation $d$; stop condition value \Tol; the maximum number of iterations \MIt;}
+ \BlankLine
+
+ $S_i \longleftarrow$ GrabCut($I,M$)\;
+ $S_i \longleftarrow $ dilate(I,d)\; 
+ \While{ \It $<$ \MIt \bf{and} \Delta $>$ \Tol  }{ 	
+ 	$S_{i+1} \longleftarrow $ DCE($S_i,\gamma,\alpha,\beta$)\;
+ 	\Delta $\longleftarrow |S_i - S_{i+1}|$\;
+
+	\It $\longleftarrow$ \It $+1$\;
+	
+ }
+ \label{alg:contour-correction} 
+ \caption{Contour correction algorithm.}
+\end{algorithm}	
+
+The algorithm can be initialized by a collection of compact sets, or with the result of a third-party segmentation algorithm, as GrabCut \cite{rother04}. We include an additional parameter $d$ that dilates the initial sets before executing the flow.
 	
 \begin{figure}
 \begin{tabular}{ccccc}
@@ -676,40 +704,38 @@ Seeds & \includegraphics[scale=0.25]{images/segmentation/coala/seeds.png} &
 		\includegraphics[scale=0.25]{images/segmentation/coala/r3_lg0_sq05_dt1_it20.png} & 
 		\includegraphics[scale=0.25]{images/segmentation/coala/r3_lg0_sq1_dt1_it50.png}	&
 		$r=3$\\
-Only data & \includegraphics[scale=0.25]{images/segmentation/coala/r3_lg0_sq0_dt1_it20.png} & 
+GrabCut & \includegraphics[scale=0.25]{images/segmentation/coala/r3_lg0_sq0_dt1_it20.png} & 
 		\includegraphics[scale=0.25]{images/segmentation/coala/r7_lg0_sq05_dt1_it20.png} &
 		\includegraphics[scale=0.25]{images/segmentation/coala/r7_lg0_sq1_dt1_it20.png} &
 		$r=7$\\
 \end{tabular}	
-\caption{Influence of parameters in the segmentation.}
+\caption{Influence of squared curvature weight $(\beta)$ with respect the data term weight $(\gamma)$ for different estimation ball radius.}
 \label{fig:parameters-influence}
 \end{figure}
 
 \begin{figure}
-	\begin{minipage}[b]{0.32\textwidth}
-		\center
-		\includegraphics[scale=0.2]{images/segmentation/tiger1/gc-seg.png}
-		\includegraphics[scale=0.2]{images/segmentation/tiger1/corrected-seg.png}		
-	\end{minipage}\hspace{5pt}%
-	\begin{minipage}[b]{0.32\textwidth}
-		\center	
-		\includegraphics[scale=0.2]{images/segmentation/snake/gc-seg.png}
-		\includegraphics[scale=0.2]{images/segmentation/snake/corrected-seg.png}		
-	\end{minipage}\hspace{5pt}%	
-	\begin{minipage}[b]{0.32\textwidth}
-		\center	
-		\includegraphics[scale=0.2]{images/segmentation/man/gc-seg.png}
-		\includegraphics[scale=0.2]{images/segmentation/man/corrected-seg.png}		
-	\end{minipage}%		
+	\begin{tabular}{ccc}
+		GrabCut & Contour Correction & Schoenemann\\
+		\includegraphics[scale=0.2]{images/segmentation/tiger1/gc-seg.png} &
+		\includegraphics[scale=0.2]{images/segmentation/tiger1/corrected-seg.png} &					\includegraphics[scale=0.2]{images/segmentation/schoenemann/tiger1/tiger1-seg.png}\\									
+		\includegraphics[scale=0.2]{images/segmentation/snake/gc-seg.png} &
+		\includegraphics[scale=0.2]{images/segmentation/snake/corrected-seg.png} &
+		\includegraphics[scale=0.2]{images/segmentation/schoenemann/snake/snake-seg.png}\\						
+		\includegraphics[scale=0.2]{images/segmentation/man/gc-seg.png} &
+		\includegraphics[scale=0.2]{images/segmentation/man/corrected-seg.png} &
+		\includegraphics[scale=0.2]{images/segmentation/schoenemann/man/man-seg.png}\\		
+		\includegraphics[scale=0.2]{images/segmentation/vase/gc-seg.png} &
+		\includegraphics[scale=0.2]{images/segmentation/vase/corrected-seg.png} &					\includegraphics[scale=0.2]{images/segmentation/schoenemann/vase/vase-seg.png}		
+	\end{tabular}
 	\label{fig:segmentation-results}
-	\caption{Examples of segmentations.}
+	\caption{The proposed method regularizes grab-cut contours and in some occasions is able to improve the original segmentation returning meaningful results. We can observe the completion behaviour of curvature in the segmentation of the snake in the second row, and we don't suffer from oversegmentation issues as Schoenemann's method. However, our flow may stop in a local optima as in the fourth row, while Schoenemann's is able to extrapolate such solutions.}
 \end{figure}
 
 
 \begin{figure}
 	\center
 	\subfloat{
-		\includegraphics[scale=0.2]{images/segmentation/penguin/1/gc-seg.png}
+
 	}%
 	\subfloat{
 		\includegraphics[scale=0.2]{images/segmentation/penguin/1/corrected-seg.png}			
@@ -719,9 +745,9 @@ Only data & \includegraphics[scale=0.25]{images/segmentation/coala/r3_lg0_sq0_dt
 	}%	
 \end{figure}
 
-Average of 3s per iteration. Average of 20 iterations. We optimize over a single band (inner pixel boundary).
+We evaluate our method using the BSD300 database \cite{martinFTM01}. All images contains the same number of pixels, the resolution being 321x481 in portrait mode. We compare the results of our method with segmentations given by GrabCut and Schoenemanns's method \cite{schoenemann09}. We report an average of $3s$ per flow iteration, and an average of $30$ iterations per image. While GrabCut executes in less than one second, Schoenemann's method may take $2$ hours to complete.
 
-\section{Final remarks}
+\section{Final remarks}\label{sec:final-remarks}
 
 \begin{itemize}
     \item{Attempts on linear and convex formulations; }
