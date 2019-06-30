@@ -776,7 +776,15 @@ In practice, QPBO can leave many pixels unlabeled. There exist two extensions of
 lost the property of partial optimality. The second is an exact method which is reported to label more variables than
 QPBO. 
 
-The lower is $m$ in $E_m$, the higher is the number of unlabeled pixels. In fact, in the case of $m=r$, the number of unlabeled pixels goes to zero after few iterations and QPBOP and QPBOI returns virtually the same labeling. That is expected, as we move farther from the optimization region, the number of pairwise components in $E_m$ decreases.
+The percentage of unlabeled pixels by QPBOP for $E_1$ is quite high, but the percentage decreases to zero as $m$ equals $r$. However, the manner which it varies across $m$ values differs from shape to shape, as it's illustrated in figure (). Naturally, in the case all pixels are labeled by QPBOP, QPBOI returns the same labeling. 
+
+\begin{figure}[!htp]
+\center
+\subfloat[]{ \includegraphics[scale=0.35]{images/optimization/plot-model-square-concavities-probe.eps}}%
+\subfloat[]{ \includegraphics[scale=0.35]{images/optimization/plot-model-flower-concavities-probe.eps}}%
+\caption{The number of unlabeled pixels by QPBOP remains high for lower values of $m$, and goes to zero when $m=r$. For the plots, we use $r=5$.}
+\end{figure}
+
 
 
 \section{Application in image segmentation}

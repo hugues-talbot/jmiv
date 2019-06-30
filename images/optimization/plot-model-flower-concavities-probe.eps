@@ -1,7 +1,7 @@
 %!PS-Adobe-2.0
 %%Title: my-plot.ps
-%%Creator: gnuplot 4.6 patchlevel 6
-%%CreationDate: Sun Jun 30 18:14:28 2019
+%%Creator: gnuplot 5.2 patchlevel 2
+%%CreationDate: Sun Jun 30 17:58:25 2019
 %%DocumentFonts: (atend)
 %%BoundingBox: 50 50 554 482
 %%Orientation: Portrait
@@ -20,6 +20,7 @@ gnudict begin
 /Dashlength 1 def
 /Landscape false def
 /Level1 false def
+/Level3 false def
 /Rounded false def
 /ClipToBoundingBox false def
 /SuppressPDFMark false def
@@ -31,11 +32,11 @@ gnudict begin
 %
 /vshift -66 def
 /dl1 {
-  10.0 Dashlength mul mul
+  10.0 Dashlength userlinewidth gnulinewidth div mul mul mul
   Rounded { currentlinewidth 0.75 mul sub dup 0 le { pop 0.01 } if } if
 } def
 /dl2 {
-  10.0 Dashlength mul mul
+  10.0 Dashlength userlinewidth gnulinewidth div mul mul mul
   Rounded { currentlinewidth 0.75 mul add } if
 } def
 /hpt_ 31.5 def
@@ -49,7 +50,7 @@ gnudict begin
   } if
 } def
 %
-% Gnuplot Prolog Version 4.6 (September 2012)
+% Gnuplot Prolog Version 5.1 (Oct 2015)
 %
 %/SuppressPDFMark true def
 %
@@ -66,11 +67,11 @@ gnudict begin
 /vpt2 vpt 2 mul def
 /hpt2 hpt 2 mul def
 /Lshow {currentpoint stroke M 0 vshift R 
-	Blacktext {gsave 0 setgray show grestore} {show} ifelse} def
+	Blacktext {gsave 0 setgray textshow grestore} {textshow} ifelse} def
 /Rshow {currentpoint stroke M dup stringwidth pop neg vshift R
-	Blacktext {gsave 0 setgray show grestore} {show} ifelse} def
+	Blacktext {gsave 0 setgray textshow grestore} {textshow} ifelse} def
 /Cshow {currentpoint stroke M dup stringwidth pop -2 div vshift R 
-	Blacktext {gsave 0 setgray show grestore} {show} ifelse} def
+	Blacktext {gsave 0 setgray textshow grestore} {textshow} ifelse} def
 /UP {dup vpt_ mul /vpt exch def hpt_ mul /hpt exch def
   /hpt2 hpt 2 mul def /vpt2 vpt 2 mul def} def
 /DL {Color {setrgbcolor Solid {pop []} if 0 setdash}
@@ -84,7 +85,7 @@ gnudict begin
 /PL {stroke userlinewidth setlinewidth
 	Rounded {1 setlinejoin 1 setlinecap} if} def
 3.8 setmiterlimit
-% Default Line colors
+% Classic Line colors (version 5.0)
 /LCw {1 1 1} def
 /LCb {0 0 0} def
 /LCa {0 0 0} def
@@ -97,19 +98,21 @@ gnudict begin
 /LC6 {0 0 0} def
 /LC7 {1 0.3 0} def
 /LC8 {0.5 0.5 0.5} def
-% Default Line Types
+% Default dash patterns (version 5.0)
+/LTB {BL [] LCb DL} def
 /LTw {PL [] 1 setgray} def
-/LTb {BL [] LCb DL} def
+/LTb {PL [] LCb DL} def
 /LTa {AL [1 udl mul 2 udl mul] 0 setdash LCa setrgbcolor} def
 /LT0 {PL [] LC0 DL} def
-/LT1 {PL [4 dl1 2 dl2] LC1 DL} def
-/LT2 {PL [2 dl1 3 dl2] LC2 DL} def
-/LT3 {PL [1 dl1 1.5 dl2] LC3 DL} def
-/LT4 {PL [6 dl1 2 dl2 1 dl1 2 dl2] LC4 DL} def
-/LT5 {PL [3 dl1 3 dl2 1 dl1 3 dl2] LC5 DL} def
-/LT6 {PL [2 dl1 2 dl2 2 dl1 6 dl2] LC6 DL} def
-/LT7 {PL [1 dl1 2 dl2 6 dl1 2 dl2 1 dl1 2 dl2] LC7 DL} def
-/LT8 {PL [2 dl1 2 dl2 2 dl1 2 dl2 2 dl1 2 dl2 2 dl1 4 dl2] LC8 DL} def
+/LT1 {PL [2 dl1 3 dl2] LC1 DL} def
+/LT2 {PL [1 dl1 1.5 dl2] LC2 DL} def
+/LT3 {PL [6 dl1 2 dl2 1 dl1 2 dl2] LC3 DL} def
+/LT4 {PL [1 dl1 2 dl2 6 dl1 2 dl2 1 dl1 2 dl2] LC4 DL} def
+/LT5 {PL [4 dl1 2 dl2] LC5 DL} def
+/LT6 {PL [1.5 dl1 1.5 dl2 1.5 dl1 1.5 dl2 1.5 dl1 6 dl2] LC6 DL} def
+/LT7 {PL [3 dl1 3 dl2 1 dl1 3 dl2] LC7 DL} def
+/LT8 {PL [2 dl1 2 dl2 2 dl1 6 dl2] LC8 DL} def
+/SL {[] 0 setdash} def
 /Pnt {stroke [] 0 setdash gsave 1 setlinecap M 0 0 V stroke grestore} def
 /Dia {stroke [] 0 setdash 2 copy vpt add M
   hpt neg vpt neg V hpt vpt neg V
@@ -331,9 +334,14 @@ gnudict begin
 %
 /languagelevel where
  {pop languagelevel} {1} ifelse
- 2 lt
-	{/InterpretLevel1 true def}
-	{/InterpretLevel1 Level1 def}
+dup 2 lt
+	{/InterpretLevel1 true def
+	 /InterpretLevel3 false def}
+	{/InterpretLevel1 Level1 def
+	 2 gt
+	    {/InterpretLevel3 Level3 def}
+	    {/InterpretLevel3 false def}
+	 ifelse }
  ifelse
 %
 % PostScript level 2 pattern fill definitions
@@ -422,16 +430,29 @@ Level1 {Level1PatternFill} {Level2PatternFill} ifelse
 /Symbol-Oblique /Symbol findfont [1 0 .167 1 0 0] makefont
 dup length dict begin {1 index /FID eq {pop pop} {def} ifelse} forall
 currentdict end definefont pop
+%
+/Metrics {ExtendTextBox Gswidth} def
+/Lwidth {currentpoint stroke M 0 vshift R Metrics} def
+/Rwidth {currentpoint stroke M dup stringwidth pop neg vshift R Metrics} def
+/Cwidth {currentpoint stroke M dup stringwidth pop -2 div vshift R Metrics} def
+/GLwidth {currentpoint stroke M 0 vshift R {ExtendTextBox} forall} def
+/GRwidth {currentpoint stroke M dup Gwidth vshift R {ExtendTextBox} forall} def
+/GCwidth {currentpoint stroke M dup Gwidth 2 div vshift R {ExtendTextBox} forall} def
+/GLwidth2 {0 Gwidth AddGlyphWidth} def
+/GRwidth2 {Gwidth -1 mul 0 AddGlyphWidth} def
+/GCwidth2 {Gwidth 2 div dup -1 mul AddGlyphWidth} def
+/AddGlyphWidth { dup TBx2 gt {userdict /TBx2 3 -1 roll put} {pop} ifelse
+                 dup TBx1 lt {userdict /TBx1 3 -1 roll put} {pop} ifelse } def
 /MFshow {
    { dup 5 get 3 ge
      { 5 get 3 eq {gsave} {grestore} ifelse }
      {dup dup 0 get findfont exch 1 get scalefont setfont
      [ currentpoint ] exch dup 2 get 0 exch R dup 5 get 2 ne {dup dup 6
-     get exch 4 get {Gshow} {stringwidth pop 0 R} ifelse }if dup 5 get 0 eq
+     get exch 4 get {textshow} {Metrics pop 0 R} ifelse }if dup 5 get 0 eq
      {dup 3 get {2 get neg 0 exch R pop} {pop aload pop M} ifelse} {dup 5
-     get 1 eq {dup 2 get exch dup 3 get exch 6 get stringwidth pop -2 div
-     dup 0 R} {dup 6 get stringwidth pop -2 div 0 R 6 get
-     show 2 index {aload pop M neg 3 -1 roll neg R pop pop} {pop pop pop
+     get 1 eq {dup 2 get exch dup 3 get exch 6 get Gswidth pop -2 div
+     dup 0 R} {dup 6 get Gswidth pop -2 div 0 R 6 get
+     textshow 2 index {aload pop M neg 3 -1 roll neg R pop pop} {pop pop pop
      pop aload pop M} ifelse }ifelse }ifelse }
      ifelse }
    forall} def
@@ -459,14 +480,39 @@ systemdict /pdfmark known not {
 SDict begin [
   /Title (my-plot.ps)
   /Subject (gnuplot plot)
-  /Creator (gnuplot 4.6 patchlevel 6)
-  /Author (dantu1)
+  /Creator (gnuplot 5.2 patchlevel 2)
 %  /Producer (gnuplot)
 %  /Keywords ()
-  /CreationDate (Sun Jun 30 18:14:28 2019)
+  /CreationDate (Sun Jun 30 17:58:25 2019)
   /DOCINFO pdfmark
 end
 } ifelse
+%
+% Support for boxed text - Ethan A Merritt Sep 2016
+%
+/InitTextBox { userdict /TBy2 3 -1 roll put userdict /TBx2 3 -1 roll put
+           userdict /TBy1 3 -1 roll put userdict /TBx1 3 -1 roll put
+	   /Boxing true def } def
+/ExtendTextBox { dup type /stringtype eq
+    { Boxing { gsave dup false charpath pathbbox
+      dup TBy2 gt {userdict /TBy2 3 -1 roll put} {pop} ifelse
+      dup TBx2 gt {userdict /TBx2 3 -1 roll put} {pop} ifelse
+      dup TBy1 lt {userdict /TBy1 3 -1 roll put} {pop} ifelse
+      dup TBx1 lt {userdict /TBx1 3 -1 roll put} {pop} ifelse
+      grestore } if }
+    {} ifelse} def
+/PopTextBox { newpath TBx1 TBxmargin sub TBy1 TBymargin sub M
+               TBx1 TBxmargin sub TBy2 TBymargin add L
+	       TBx2 TBxmargin add TBy2 TBymargin add L
+	       TBx2 TBxmargin add TBy1 TBymargin sub L closepath } def
+/DrawTextBox { PopTextBox stroke /Boxing false def} def
+/FillTextBox { gsave PopTextBox fill grestore /Boxing false def} def
+0 0 0 0 InitTextBox
+/TBxmargin 20 def
+/TBymargin 20 def
+/Boxing false def
+/textshow { ExtendTextBox Gshow } def
+%
 end
 %%EndProlog
 %%Page: 1 1
@@ -481,632 +527,820 @@ newpath
 BackgroundColor 0 lt 3 1 roll 0 lt exch 0 lt or or not {gsave BackgroundColor C clippath fill grestore} if
 1.000 UL
 LTb
-740 640 M
+LCb setrgbcolor
+980 897 M
 63 0 V
-3876 0 R
+3636 0 R
 -63 0 V
 stroke
-620 640 M
+860 897 M
 [ [(Helvetica) 200.0 0.0 true true 0 ( 0)]
 ] -66.7 MRshow
 1.000 UL
 LTb
-740 1153 M
+LCb setrgbcolor
+980 1410 M
 63 0 V
-3876 0 R
+3636 0 R
 -63 0 V
 stroke
-620 1153 M
+860 1410 M
+[ [(Helvetica) 200.0 0.0 true true 0 ( 0.2)]
+] -66.7 MRshow
+1.000 UL
+LTb
+LCb setrgbcolor
+980 1923 M
+63 0 V
+3636 0 R
+-63 0 V
+stroke
+860 1923 M
+[ [(Helvetica) 200.0 0.0 true true 0 ( 0.4)]
+] -66.7 MRshow
+1.000 UL
+LTb
+LCb setrgbcolor
+980 2436 M
+63 0 V
+3636 0 R
+-63 0 V
+stroke
+860 2436 M
+[ [(Helvetica) 200.0 0.0 true true 0 ( 0.6)]
+] -66.7 MRshow
+1.000 UL
+LTb
+LCb setrgbcolor
+980 2949 M
+63 0 V
+3636 0 R
+-63 0 V
+stroke
+860 2949 M
+[ [(Helvetica) 200.0 0.0 true true 0 ( 0.8)]
+] -66.7 MRshow
+1.000 UL
+LTb
+LCb setrgbcolor
+980 3462 M
+63 0 V
+3636 0 R
+-63 0 V
+stroke
+860 3462 M
 [ [(Helvetica) 200.0 0.0 true true 0 ( 1)]
 ] -66.7 MRshow
 1.000 UL
 LTb
-740 1666 M
-63 0 V
-3876 0 R
--63 0 V
-stroke
-620 1666 M
-[ [(Helvetica) 200.0 0.0 true true 0 ( 2)]
-] -66.7 MRshow
-1.000 UL
-LTb
-740 2180 M
-63 0 V
-3876 0 R
--63 0 V
-stroke
-620 2180 M
-[ [(Helvetica) 200.0 0.0 true true 0 ( 3)]
-] -66.7 MRshow
-1.000 UL
-LTb
-740 2693 M
-63 0 V
-3876 0 R
--63 0 V
-stroke
-620 2693 M
-[ [(Helvetica) 200.0 0.0 true true 0 ( 4)]
-] -66.7 MRshow
-1.000 UL
-LTb
-740 3206 M
-63 0 V
-3876 0 R
--63 0 V
-stroke
-620 3206 M
-[ [(Helvetica) 200.0 0.0 true true 0 ( 5)]
-] -66.7 MRshow
-1.000 UL
-LTb
-740 3719 M
-63 0 V
-3876 0 R
--63 0 V
-stroke
-620 3719 M
-[ [(Helvetica) 200.0 0.0 true true 0 ( 6)]
-] -66.7 MRshow
-1.000 UL
-LTb
-740 640 M
+LCb setrgbcolor
+980 640 M
 0 63 V
 0 3016 R
 0 -63 V
 stroke
-740 440 M
+980 440 M
 [ [(Helvetica) 200.0 0.0 true true 0 ( 0)]
 ] -66.7 MCshow
 1.000 UL
 LTb
-1232 640 M
+LCb setrgbcolor
+1350 640 M
 0 63 V
 0 3016 R
 0 -63 V
 stroke
-1232 440 M
+1350 440 M
+[ [(Helvetica) 200.0 0.0 true true 0 ( 10)]
+] -66.7 MCshow
+1.000 UL
+LTb
+LCb setrgbcolor
+1720 640 M
+0 63 V
+0 3016 R
+0 -63 V
+stroke
+1720 440 M
 [ [(Helvetica) 200.0 0.0 true true 0 ( 20)]
 ] -66.7 MCshow
 1.000 UL
 LTb
-1725 640 M
+LCb setrgbcolor
+2090 640 M
 0 63 V
 0 3016 R
 0 -63 V
 stroke
-1725 440 M
+2090 440 M
+[ [(Helvetica) 200.0 0.0 true true 0 ( 30)]
+] -66.7 MCshow
+1.000 UL
+LTb
+LCb setrgbcolor
+2460 640 M
+0 63 V
+0 3016 R
+0 -63 V
+stroke
+2460 440 M
 [ [(Helvetica) 200.0 0.0 true true 0 ( 40)]
 ] -66.7 MCshow
 1.000 UL
 LTb
-2217 640 M
+LCb setrgbcolor
+2830 640 M
 0 63 V
 0 3016 R
 0 -63 V
 stroke
-2217 440 M
+2830 440 M
+[ [(Helvetica) 200.0 0.0 true true 0 ( 50)]
+] -66.7 MCshow
+1.000 UL
+LTb
+LCb setrgbcolor
+3199 640 M
+0 63 V
+0 3016 R
+0 -63 V
+stroke
+3199 440 M
 [ [(Helvetica) 200.0 0.0 true true 0 ( 60)]
 ] -66.7 MCshow
 1.000 UL
 LTb
-2710 640 M
+LCb setrgbcolor
+3569 640 M
 0 63 V
 0 3016 R
 0 -63 V
 stroke
-2710 440 M
+3569 440 M
+[ [(Helvetica) 200.0 0.0 true true 0 ( 70)]
+] -66.7 MCshow
+1.000 UL
+LTb
+LCb setrgbcolor
+3939 640 M
+0 63 V
+0 3016 R
+0 -63 V
+stroke
+3939 440 M
 [ [(Helvetica) 200.0 0.0 true true 0 ( 80)]
 ] -66.7 MCshow
 1.000 UL
 LTb
-3202 640 M
+LCb setrgbcolor
+4309 640 M
 0 63 V
 0 3016 R
 0 -63 V
 stroke
-3202 440 M
-[ [(Helvetica) 200.0 0.0 true true 0 ( 100)]
+4309 440 M
+[ [(Helvetica) 200.0 0.0 true true 0 ( 90)]
 ] -66.7 MCshow
 1.000 UL
 LTb
-3694 640 M
-0 63 V
-0 3016 R
-0 -63 V
-stroke
-3694 440 M
-[ [(Helvetica) 200.0 0.0 true true 0 ( 120)]
-] -66.7 MCshow
-1.000 UL
-LTb
-4187 640 M
-0 63 V
-0 3016 R
-0 -63 V
-stroke
-4187 440 M
-[ [(Helvetica) 200.0 0.0 true true 0 ( 140)]
-] -66.7 MCshow
-1.000 UL
-LTb
+LCb setrgbcolor
 4679 640 M
 0 63 V
 0 3016 R
 0 -63 V
 stroke
 4679 440 M
-[ [(Helvetica) 200.0 0.0 true true 0 ( 160)]
+[ [(Helvetica) 200.0 0.0 true true 0 ( 100)]
 ] -66.7 MCshow
 1.000 UL
 LTb
+LCb setrgbcolor
+1.000 UL
+LTB
+LCb setrgbcolor
+980 3719 N
+980 640 L
+3699 0 V
+0 3079 V
+-3699 0 V
+Z stroke
+1.000 UP
 1.000 UL
 LTb
-740 3719 N
-740 640 L
-3939 0 V
-0 3079 V
--3939 0 V
-Z stroke
 LCb setrgbcolor
-160 2179 M
+LCb setrgbcolor
+180 2179 M
 currentpoint gsave translate -270 rotate 0 0 moveto
-[ [(Helvetica) 200.0 0.0 true true 0 (Elastica )]
-[(Symbol) 200.0 0.0 true true 0 (a)]
-[(Helvetica) 200.0 0.0 true true 0 (=1 )]
-[(Symbol) 200.0 0.0 true true 0 (b)]
-[(Helvetica) 200.0 0.0 true true 0 (=0)]
+[ [(Helvetica) 200.0 0.0 true true 0 (Perc. Unlabeled)]
 ] -66.7 MCshow
 grestore
 LTb
 LCb setrgbcolor
-2709 140 M
+2829 140 M
 [ [(Helvetica) 200.0 0.0 true true 0 (Iterations)]
 ] -66.7 MCshow
 LTb
-2709 4019 M
-[ [(Helvetica) 200.0 0.0 true true 0 (h=0.5 r=5)]
+LCb setrgbcolor
+2829 4019 M
+[ [(Helvetica) 200.0 0.0 true true 0 (flower)]
 ] -66.7 MCshow
-1.000 UP
-1.000 UL
-LTb
 % Begin plot #1
 1.000 UL
-LT0
+LTb
 LCb setrgbcolor
-3776 3556 M
-[ [(Helvetica) 200.0 0.0 true true 0 (Triangle)]
+LCb setrgbcolor
+3776 2579 M
+[ [(Helvetica) 200.0 0.0 true true 0 (m=1)]
 ] -66.7 MRshow
-LT0
-3896 3556 M
+1.000 UL
+LTb
+LCb setrgbcolor
+3896 2579 M
 543 0 V
-740 2024 M
-25 -253 V
-24 -480 V
-25 -251 V
-24 -34 V
-25 -42 V
-25 -27 V
-24 -9 V
-25 -23 V
-25 -26 V
-24 13 V
-25 -31 V
-24 27 V
-25 -30 V
-25 7 V
-24 -26 V
-25 4 V
-25 19 V
-24 -35 V
-25 1 V
-24 29 V
-25 -44 V
-25 9 V
-24 -5 V
-25 29 V
-24 -35 V
-25 14 V
-25 -15 V
-24 20 V
-25 -19 V
-25 3 V
-24 10 V
-25 5 V
-24 -18 V
-25 15 V
-25 -9 V
-24 21 V
-25 -9 V
-25 -6 V
-24 23 V
-25 -4 V
-24 11 V
-25 -34 V
-25 9 V
-24 22 V
-25 -7 V
-24 18 V
-25 -36 V
-25 17 V
-24 -1 V
-25 42 V
-25 -30 V
-24 -4 V
-25 1 V
-24 31 V
-25 -24 V
-25 3 V
-24 -2 V
-25 51 V
-25 -44 V
-24 4 V
-25 45 V
-24 -14 V
-25 -26 V
-25 54 V
-24 -21 V
-25 -17 V
-24 42 V
-25 -12 V
-25 -3 V
-24 54 V
-25 -41 V
-25 52 V
-24 -24 V
-25 41 V
-24 -13 V
-25 74 V
-25 -12 V
-24 13 V
-25 30 V
-25 54 V
-24 58 V
-25 78 V
-24 271 V
-25 723 V
-25 1268 V
+980 2707 M
+37 -27 V
+37 79 V
+37 -7 V
+37 -40 V
+37 17 V
+37 -20 V
+37 -45 V
+37 23 V
+37 1 V
+37 -54 V
+37 36 V
+37 19 V
+37 -29 V
+37 33 V
+37 -12 V
+37 28 V
+37 12 V
+37 -19 V
+37 29 V
+37 12 V
+37 11 V
+37 0 V
+37 -19 V
+37 12 V
+37 12 V
+37 0 V
+37 -12 V
+37 -7 V
+37 31 V
+37 -19 V
+37 13 V
+37 25 V
+37 0 V
+37 25 V
+37 37 V
+37 -12 V
+37 18 V
+37 7 V
+37 -13 V
+37 6 V
+37 38 V
+37 6 V
+37 -6 V
+37 18 V
+37 13 V
+37 6 V
+37 -12 V
+37 25 V
+37 12 V
+37 0 V
+36 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
 % End plot #1
 % Begin plot #2
 stroke
+LTb
 LT1
 LCb setrgbcolor
-3776 3356 M
-[ [(Helvetica) 200.0 0.0 true true 0 (Square)]
+LCb setrgbcolor
+3776 2379 M
+[ [(Helvetica) 200.0 0.0 true true 0 (m=2)]
 ] -66.7 MRshow
+1.000 UL
+LTb
 LT1
-3896 3356 M
+LCb setrgbcolor
+3896 2379 M
 543 0 V
-740 1170 M
-765 954 L
-24 -67 V
-25 -40 V
-24 -22 V
-25 6 V
-25 -26 V
-24 -21 V
-25 16 V
-25 -26 V
-24 12 V
-25 -23 V
-24 17 V
-25 -24 V
-25 14 V
-24 -22 V
-25 9 V
-25 -7 V
-24 19 V
-25 -26 V
-24 12 V
-25 -13 V
-25 7 V
-24 3 V
-25 0 V
-24 -4 V
-25 15 V
-25 -12 V
-24 2 V
-25 7 V
-25 -4 V
-24 9 V
-25 -12 V
-24 -1 V
-25 10 V
-25 2 V
-24 10 V
-25 -23 V
-25 0 V
-24 13 V
-25 2 V
-24 -1 V
-25 0 V
-25 0 V
-24 1 V
-25 0 V
-24 -1 V
-25 1 V
-25 0 V
-24 0 V
-25 0 V
-25 -1 V
-24 1 V
-25 0 V
-24 0 V
-25 0 V
-25 -1 V
-24 1 V
-25 0 V
-25 -1 V
-24 1 V
-25 0 V
-24 0 V
-25 -1 V
-25 1 V
-24 -1 V
-25 1 V
-24 0 V
-25 0 V
-25 -1 V
-24 1 V
-25 0 V
-25 0 V
-24 0 V
-25 -1 V
-24 1 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-25 -1 V
-24 1 V
-25 0 V
-24 0 V
-25 -1 V
-25 0 V
-24 1 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 -1 V
-25 1 V
-24 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-stroke 3325 766 M
-25 -1 V
-24 1 V
-25 -1 V
-24 1 V
-25 -1 V
-25 0 V
-24 1 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-24 0 V
-25 -1 V
-25 0 V
-24 1 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 -1 V
-25 0 V
-25 1 V
-24 0 V
-25 -1 V
-24 0 V
-25 0 V
-25 1 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-24 -1 V
-25 1 V
-25 0 V
-24 0 V
-25 -1 V
-24 1 V
-25 0 V
-25 -1 V
-24 0 V
-25 1 V
-25 -1 V
-24 1 V
+980 2775 M
+37 73 V
+37 -75 V
+37 -63 V
+37 -41 V
+37 69 V
+37 16 V
+37 -34 V
+37 15 V
+37 -9 V
+37 6 V
+37 -6 V
+37 14 V
+37 -29 V
+37 -24 V
+37 58 V
+37 11 V
+37 6 V
+37 -12 V
+37 53 V
+37 6 V
+37 0 V
+37 24 V
+37 -6 V
+37 12 V
+37 13 V
+37 12 V
+37 0 V
+37 -6 V
+37 -6 V
+37 13 V
+37 49 V
+37 7 V
+37 25 V
+37 -38 V
+37 25 V
+37 0 V
+37 13 V
+37 12 V
+37 -25 V
+37 6 V
+37 7 V
+37 24 V
+37 -12 V
+37 -6 V
+37 12 V
+37 13 V
+37 12 V
+37 -6 V
+37 0 V
+37 0 V
+36 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
 % End plot #2
 % Begin plot #3
 stroke
+LTb
 LT2
 LCb setrgbcolor
-3776 3156 M
-[ [(Helvetica) 200.0 0.0 true true 0 (Flower)]
+LCb setrgbcolor
+3776 2179 M
+[ [(Helvetica) 200.0 0.0 true true 0 (m=3)]
 ] -66.7 MRshow
+1.000 UL
+LTb
 LT2
-3896 3156 M
+LCb setrgbcolor
+3896 2179 M
 543 0 V
-740 3034 M
-25 186 V
-24 49 V
-814 2147 L
-24 -118 V
-25 -173 V
-25 -101 V
-24 -87 V
-25 -97 V
-25 -53 V
-24 -90 V
-25 -172 V
-24 -44 V
-25 -18 V
-25 -125 V
-24 -12 V
-25 -6 V
-25 3 V
-24 -53 V
-25 3 V
-24 -43 V
-25 -7 V
-25 -19 V
-24 -60 V
-25 -9 V
-24 -5 V
-25 1 V
-25 -9 V
-24 -30 V
-25 -12 V
-25 1 V
-24 -15 V
-25 6 V
-24 -11 V
-25 1 V
-25 -1 V
-24 -7 V
-25 3 V
-25 -4 V
-24 -6 V
-25 -6 V
-24 1 V
-25 -3 V
-25 0 V
-24 1 V
-25 0 V
-24 -1 V
-25 -3 V
-25 4 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-24 -1 V
-25 1 V
-25 0 V
-24 0 V
-25 -1 V
-24 1 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-24 0 V
-25 0 V
-25 -1 V
-24 1 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 -1 V
-25 1 V
-25 0 V
-24 0 V
-stroke 3374 771 M
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
-25 0 V
-24 0 V
-25 -1 V
-25 1 V
-24 0 V
-25 0 V
-25 0 V
-24 0 V
+980 2819 M
+37 38 V
+37 34 V
+37 -24 V
+37 -122 V
+37 -7 V
+37 41 V
+37 -185 V
+37 114 V
+37 86 V
+37 8 V
+37 -48 V
+37 87 V
+37 45 V
+37 -24 V
+37 58 V
+37 -52 V
+37 24 V
+37 -12 V
+37 85 V
+37 0 V
+37 7 V
+37 -17 V
+37 -66 V
+37 24 V
+37 44 V
+37 0 V
+37 18 V
+37 2 V
+37 6 V
+37 12 V
+37 7 V
+37 31 V
+37 0 V
+37 25 V
+37 -13 V
+37 125 V
+37 0 V
+37 -13 V
+37 44 V
+37 0 V
+37 6 V
+37 6 V
+37 7 V
+37 0 V
+37 6 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+36 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
 % End plot #3
+% Begin plot #4
 stroke
 LTb
-740 3719 N
-740 640 L
-3939 0 V
+LT3
+LCb setrgbcolor
+LCb setrgbcolor
+3776 1979 M
+[ [(Helvetica) 200.0 0.0 true true 0 (m=4)]
+] -66.7 MRshow
+1.000 UL
+LTb
+LT3
+LCb setrgbcolor
+3896 1979 M
+543 0 V
+980 1124 M
+37 67 V
+37 31 V
+37 -7 V
+37 -133 V
+37 -35 V
+37 4 V
+37 118 V
+37 -110 V
+37 103 V
+37 5 V
+37 25 V
+37 52 V
+37 -150 V
+37 -17 V
+37 0 V
+37 2 V
+37 6 V
+37 8 V
+37 -11 V
+37 0 V
+37 2 V
+37 2 V
+37 2 V
+37 6 V
+37 -6 V
+37 0 V
+37 6 V
+37 -4 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 6 V
+37 -6 V
+37 0 V
+37 99 V
+37 -99 V
+37 0 V
+36 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+% End plot #4
+% Begin plot #5
+stroke
+2.000 UL
+LTb
+LCb setrgbcolor
+LCb setrgbcolor
+3776 1779 M
+[ [(Helvetica) 200.0 0.0 true true 0 (m=5)]
+] -66.7 MRshow
+2.000 UL
+LTb
+LCb setrgbcolor
+3896 1779 M
+543 0 V
+980 897 M
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+36 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+37 0 V
+% End plot #5
+stroke
+LTb
+LCb setrgbcolor
+1.000 UL
+LTB
+LCb setrgbcolor
+980 3719 N
+980 640 L
+3699 0 V
 0 3079 V
--3939 0 V
+-3699 0 V
 Z stroke
 1.000 UP
 1.000 UL
 LTb
+LCb setrgbcolor
 stroke
 grestore
 end
 showpage
 %%Trailer
-%%DocumentFonts: Symbol Helvetica
+%%DocumentFonts: Helvetica
 %%Pages: 1
