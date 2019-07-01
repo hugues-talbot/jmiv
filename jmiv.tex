@@ -552,7 +552,7 @@ where $c_1=3/r^6$ and $c_2=\pi r^2/2$. Let $X,Y$ be the set of pixels and linels
 
 where $F$ is some measure of similarity, e.g. distance, between initial shape $S$ and candidate solution. Such term is needed, otherwise the uninteresting empty set would be the optimal solution.
 
-Formulation \eqref{eq:general-binary-formulation} is of order four, binary and non-convex. These properties make it a hard optimization problem. We are going to explore an alternative energy, which is a simplification of the former. In section \ref{sec:conclusion} we comment our attempts in optimizing  other variations of \eqref{eq:general-binary-formulation}.
+Formulation \eqref{eq:general-binary-formulation} is of order four, binary and non-convex. These properties make it a hard optimization problem. We are going to explore an alternative energy, which is a simplification of the former.
 
 \subsection{A first model}
 
@@ -776,13 +776,14 @@ In practice, QPBO can leave many pixels unlabeled. There exist two extensions of
 lost the property of partial optimality. The second is an exact method which is reported to label more variables than
 QPBO. 
 
-The percentage of unlabeled pixels by QPBOP for $E_1$ is quite high, but the percentage decreases to zero as $m$ equals $r$. However, the manner which it varies across $m$ values differs from shape to shape, as it's illustrated in figure (). Naturally, in the case all pixels are labeled by QPBOP, QPBOI returns the same labeling. 
+The percentage of unlabeled pixels by QPBOP for $E_1$ is quite high, but the percentage decreases to zero as $m$ equals $r$. Therefore, we are more confident to take the solution for values of $m$ close to $r$. However, the manner which it varies across $m$ values differs from shape to shape, as it's illustrated in figure \ref{fig:unlabeled-versus-iterations}. Naturally, in the case all pixels are labeled by QPBOP, QPBOI returns the same labeling. 
 
 \begin{figure}[!htp]
 \center
 \subfloat[]{ \includegraphics[scale=0.35]{images/optimization/plot-model-square-concavities-probe.eps}}%
 \subfloat[]{ \includegraphics[scale=0.35]{images/optimization/plot-model-flower-concavities-probe.eps}}%
 \caption{The number of unlabeled pixels by QPBOP remains high for lower values of $m$, and goes to zero when $m=r$. For the plots, we use $r=5$.}
+\label{fig:unlabeled-versus-iterations}
 \end{figure}
 
 
@@ -884,14 +885,16 @@ Seeds & $(\alpha=0, \beta=0.5)$ & $(\alpha=0,\beta=1)$ \\
 We evaluate our method using the BSD300 database \cite{martinFTM01berkeley}. All images contains the same number of pixels, the resolution being 321x481 in portrait mode. We compare the results of our method with segmentations given by GrabCut and Schoenemanns's method \cite{schoenemann09linear}. We report an average of $3s$ per flow iteration, and an average of $30$ iterations per image. While GrabCut executes in less than one second, Schoenemann's method may take $2$ hours to complete.
 
 
-In figure \ref{fig:parameters-influence} we can observe the results of a curvature regularization in comparison with a pure length regularization, and in figure \ref{fig:segmentation-results} we show some segmentation results.
+In figure \ref{fig:parameters-influence} we can observe the results of a curvature regularization in comparison with a pure length regularization, and figure \ref{fig:segmentation-results} shows some segmentation results.
 
 
 
 \section{Conclusion}\label{sec:conclusion}
 
 
-We've described two digital evolutions models based on the elastica energy and we've presented an application of one of them in image segmentation. The processes we've described are completely digital, and do not suffer from issues that typically arises in models that passes through a discretization stage, as rounding. Moreover, the model can handle changes in topology and its results are competitive with similar approaches. 
+We've described two digital evolutions models based on the elastica energy and we've presented an application of one of them in image segmentation. The processes we've described are completely digital, and do not suffer from issues that typically arises in models that passes through a discretization stage, as rounding. Moreover, the model can handle changes in topology and its results are competitive with similar approaches and ran in reasonable time. 
+
+Future developments of this work may include automatization, no more dependence on seeds selected by the user; and the extension of the evolution model to the $3$d case. In the latter, a denoising application may be derived by running the flow on the $3$d shape defined by color and position.
 
 
 
