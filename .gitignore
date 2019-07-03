@@ -4,3 +4,7 @@
 *.gz
 *.pgm
 *.txt
+*.ppm
+*.lplog
+*.info
+mask-boundary.png
