@@ -469,21 +469,19 @@ where $int(C)$ is the interior of the shape bounded by oriented curve $C$. Algor
 \begin{figure}[!ht]
 \center
 	\subfloat[\label{}]{%
-	\includegraphics[scale=0.125]{images/local_search/square/h1.0/summary_flow.eps}
+	\includegraphics[scale=0.125]{images/local_search/square/h1/summary-flow.eps}
 	}%
 	\hspace{10pt}
 	\subfloat[\label{}]{%
-	\includegraphics[scale=0.125]{images/local_search/square/h0.5/summary_flow.eps}
+	\includegraphics[scale=0.125]{images/local_search/square/h05/summary-flow.eps}
 	}%
 	\hspace{10pt}
 	\subfloat[\label{}]{%
-		\textbf{Missing figure}
-	%\includegraphics[scale=0.125]{images/local_search/square/h1.0/summary_flow.eps}
+	\includegraphics[scale=0.125]{images/local_search/flower/h1/summary-flow.eps}
 	}%
 	\hspace{10pt}
 	\subfloat[\label{}]{%
-	\textbf{Missing figure}
-	%\includegraphics[scale=0.125]{images/local_search/square/h0.5/summary_flow.eps}
+	\includegraphics[scale=0.125]{images/local_search/flower/h05/summary-flow.eps}
 	}%
 		\caption{Local combinatorial optimization process results for the square and flower shapes. Grid step $1.0$ in (a),(c) and $0.5$ in (b),(d).}	
 		\label{fig:local-comb-square-results}
@@ -508,8 +506,7 @@ next section, we explore a more efficient approach.
 \begin{figure}
 \begin{minipage}[b]{0.5\textwidth}
 \center
-%\includegraphics[scale=0.35]{images/local_search/square/graph.eps}
-	\textbf{Missing figure}
+\includegraphics[scale=0.35]{images/local_search/square-flower.eps}
 \caption{Elastica computation along iterations of algorithm \ref{alg:local-search}}
 \label{fig:plot-elastica-local-search}
 \end{minipage}\hspace{40pt}%
@@ -520,9 +517,9 @@ next section, we explore a more efficient approach.
 \hline
 & $h=1.0$ & $h=0.5$\\
 \hline
-Square & 747s (36s/it) & 7497s (202s/it)\\
+Square & 47s (5s/it) & 260s (12s/it)\\
 \hline
-Flower & 6946s (87s/it)  & 66376s (593s/it)\\
+Flower & 1235s (23s/it)  & 8516s (52s/it)\\
 \hline
 \end{tabular}
 \caption{Running times for the local combinatorial optimization algorithm with $k=1,N=20$.}
