@@ -542,7 +542,7 @@ Flower & 6946s (87s/it)  & 66376s (593s/it)\\
 where $c_1=3/r^6$ and $c_2=\pi r^2/2$. Let $X,Y$ be the set of pixels and linels, respectively, in $\Omega$. We define the following binary model
 		
 \begin{align}
-\text{Minimize}_{x,y} & \sum_{y}{c_1y \Big(c_2 - \sum_{x_i \in B_r(y)}{x_i}\Big)^2	 } + F(S,X_{=1} \cup Y_{=1}) \nonumber \\
+\text{Minimize}_{x,y} & \sum_{y}{c_1y \Big(c_2 - \sum_{x_j \in B_r(y)}{x_j}\Big)^2	 } + F(S,X_{=1} \cup Y_{=1}) \nonumber \\
 \text{subject to} & \nonumber \\
 & (X_{=1} \cup Y_{=1}) \in \Omega_C, \; x,y \in \{0,1\}^\Omega
 \label{eq:general-binary-formulation}
@@ -601,7 +601,7 @@ In order to be symmetric, the curvature at some linel $y$ is computed on $R_m(S)
 	\comment{Expansion mode}
 	\If{ \It is odd }{	 
 	 	$Z^{(i)} \longleftarrow \argmin_Z E_m(Z,\overline{S^{(i)}})$\;
- 		$S^{(i)} \longleftarrow F_i + \overline{Z_i}$\;
+ 		$S^{(i)} \longleftarrow F^{(i)} + \overline{Z^{(i)}}$\;
  		$S^{(i)} \longleftarrow \overline{S^{(i)}}$\;	 	
  	}
 	\comment{Shrinking mode} 	
@@ -799,7 +799,7 @@ We have used QPBOI to solve $E_m$. Naturally, in the case that all pixels are la
 \begin{figure}
 \center
 \includegraphics[scale=0.5]{images/optimization/pairwise-ratio/plot-pairwiseratio-lowerHigher-concavities-probe.eps}
-\caption{We plot the ratio of pairwise terms among all $\binom{|Y|}{2}$ combinations. The highest ring has rougly half the number of pairwise terms  than the lowest ring.}
+\caption{We plot the ratio of pairwise terms among all $\binom{|X|}{2}$ combinations. The highest ring has rougly half the number of pairwise terms  than the lowest ring.}
 \end{figure}
 
 
@@ -809,7 +809,7 @@ We have used QPBOI to solve $E_m$. Naturally, in the case that all pixels are la
 We present an application in supervised image segmentation for the digital evolution described in the previous section. We include a data fidelity $g(\cdot)$ and a length penalization $s(\cdot)$ terms in energy $E_m$. At iteration $i$, we minimize
 
 \begin{align}			
-	\min_{Y_i} \sum_{y \in Y_i}{\Big( \gamma \cdot g(y) + \alpha \cdot s(y) \Big)} + \sum_{y \in R_r(S_i)}{ \beta \cdot \hat{\kappa}_{r}^2(y)}.
+	\min_{Y^{(i)}} \sum_{y \in Y^{(i)}}{\Big( \gamma \cdot g(y) + \alpha \cdot s(y) \Big)} + \sum_{y \in R_r(S^{(i)})}{ \beta \cdot \hat{\kappa}_{r}^2(y)}.
 	\label{eq:boundary-correction-energy}
 \end{align}
 	
@@ -818,8 +818,8 @@ We present an application in supervised image segmentation for the digital evolu
 	
 	\begin{align*}
 		s(y)=\sum_{y_j \in \mathcal{N}_4(y)}{ t(y_j) }, \quad \text{where } t(y_j) = \left\{\begin{array}{ll}
-		(y-y_j)^2, & \text{if } y_j \in O_{r,i}\\
-		(y-0), & \text{if } y_j \in F_{r,i}\\
+		(y-y_j)^2, & \text{if } y_j \in O_{r}^{(i)}\\
+		(y-0), & \text{if } y_j \in F_{r}^{(i)}\\
 		(y-1), & \text{otherwise }
 		\end{array}\right.
 	\end{align*}
@@ -844,11 +844,11 @@ We present an application in supervised image segmentation for the digital evolu
  \Input{An image $I$; seed mask $M$; The estimation ball radius $r$; data $(\gamma)$, length $(\alpha)$ and squared curvature $(\beta)$ weights; initial dilation $d$; stop condition value \Tol; the maximum number of iterations \MIt;}
  \BlankLine
 
- $S_i \longleftarrow$ GrabCut($I,M$)\;
- $S_i \longleftarrow $ dilate(I,d)\; 
+ $S^{(i)} \longleftarrow$ GrabCut($I,M$)\;
+ $S^{(i)} \longleftarrow $ dilate(I,d)\; 
  \While{ \It $<$ \MIt \bf{and} \Delta $>$ \Tol  }{ 	
- 	$S_{i+1} \longleftarrow $ DCE($S_i,\gamma,\alpha,\beta$)\;
- 	\Delta $\longleftarrow |S_i - S_{i+1}|$\;
+ 	$S^{(i+1)} \longleftarrow $ DCE($S^{(i)},\gamma,\alpha,\beta$)\;
+ 	\Delta $\longleftarrow |S^{(i)} - S^{(i+1)}|$\;
 
 	\It $\longleftarrow$ \It $+1$\;
 	
