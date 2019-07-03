@@ -752,16 +752,16 @@ In our experiments, the best results are obtained by executing DCE algorithm wit
 
 \subsection{Optimization method}
 
-Let $F$ be a function of $n$ binary variables, i.e.
+Let $f$ be a function of $n$ binary variables with unary and pairwise terms, i.e.
 
 \begin{align*}
-F(y_1,\cdots, y_n) = \sum_{i}{F_i(y_i)} + \sum_{i < j}{F_{i,j}(y_i,y_j)}
+f(y_1,\cdots, y_n) = \sum_{j}{f_j(y_j)} + \sum_{j < k}{f_{j,k}(y_j,y_k)}
 \end{align*}
 
-Function $F$ is submodular if and only if the following inequality holds for each pairwise term $F_{i,j}$ \cite{kolmogorov04whatenergies}
+Function $f$ is submodular if and only if the following inequality holds for each pairwise term $f_{j,k}$ \cite{kolmogorov04whatenergies}
 
 \begin{align*}
-	\quad F_{i,j}(0,0) + F_{i,j}(1,1) \leq F_{i,j}(0,1) + F_{i,j}(1,0)
+	\quad f_{j,k}(0,0) + f_{j,k}(1,1) \leq f_{j,k}(0,1) + f_{j,k}(1,0)
 \end{align*}
 
 Energy $E_m$ is non-submodular and optimizing it is a difficult problem, which
@@ -775,7 +775,10 @@ In practice, QPBO can leave many pixels unlabeled. There exist two extensions of
 lost the property of partial optimality. The second is an exact method which is reported to label more variables than
 QPBO. 
 
-The percentage of unlabeled pixels by QPBOP for $E_1$ is quite high, but the percentage decreases to zero as $m$ equals $r$. Therefore, we are more confident to take the solution for values of $m$ close to $r$. However, the manner which it varies across $m$ values differs from shape to shape, as it's illustrated in figure \ref{fig:unlabeled-versus-iterations}. Naturally, in the case all pixels are labeled by QPBOP, QPBOI returns the same labeling. 
+The percentage of unlabeled pixels by QPBOP for $E_1$ is quite high, but the percentage decreases to zero as we set $m$ equal to $r$. Therefore, we are more confident to take the solution for values of $m$ close to $r$. However, the manner which it varies across $m$ values differs from shape to shape, as it's illustrated in figure \ref{fig:unlabeled-versus-iterations}. 
+
+We have used QPBOI to solve $E_m$. Naturally, in the case that all pixels are labeled by QPBOP, QPBOI returns the same labeling as QPBOP. 
+
 
 \begin{figure}[!htp]
 \center
