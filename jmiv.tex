@@ -212,11 +212,11 @@ convergence and highlights its importance for the definition of
 digital estimators. Next, we describe two convergent estimators used
 in this paper, one for tangent and the other for curvature. They are
 used in the optimization model and in the definition of the digital
-elastica. Section three describes the proposed curvature evolution
-model along with several illustrations of digital flows. Section four
+elastica. Section three describes a local combinatorial optimization model
+suitable for different curvature estimators. Section four describes the proposed 
+curvature evolution model along with several illustrations of digital flows. Section five
 explains how to use the evolution model as a post-processing step in
-an image segmentation framework. Finally, sections five and six
-discuss the results and point directions for future work.
+an image segmentation framework. 
 
 
 
@@ -360,13 +360,13 @@ In the remaining of this paper we are going to be interested in the minimization
   \label{eq:elastica}
 \end{align}
 
-We are going to use the digital version of the energy, using multigrid convergent estimators. The energy, in this case, is also multigrid convergent.
-
+The digital version of elastica, using multigrid convergent estimators is defined as
 
 \begin{align}
 	\hat{E}( D_h(X) ) = \sum_{x \in \partial D_h(X)}{ \hat{s}(x)\left(\; \alpha + \beta \hat{\kappa}_{r}^2(D_h(X),x,h) \; \right)}.
 	\label{eq:digital-energy}
 \end{align}
+
  In the following we omit the grid step $h$ to simplify expressions (or, putting it differently, we assume that $X$ is rescaled by $1/h$ and we set $h=1$).
 
 \section{Local combinatorial optimization}
@@ -386,7 +386,7 @@ Let $S$ be a $2$-dimensional digital shape. We adopt the cellular-grid model to 
 Let $d_{S}:\Omega \rightarrow \mathcal{R}$ be the euclidean distance transformation with respect to shape $S$. The value $d_S(x)$ gives the euclidean distance between $x$ and the closest pixel in $S$. 
 
 \begin{definition}[m-Ring Set]
-Given a digital shape $S\in\Omega$, its distance transformation $d_S$ and natural numbers $m,r > 0$, we define its $m$-ring set as
+Given a digital shape $S\in\Omega$, its distance transformation $d_S$ and natural numbers $m > 0$, we define its $m$-ring set as
 
 \begin{align*}
 	\quad R_m(S) &= R_m^-(S) \; \cup \; R_m^+(S) \\
@@ -429,10 +429,10 @@ Given closed curves $C_1,C_2$ with same orientation, its set of $n$-glued curves
 \end{align*}
 \end{definition}
 
-Let $S_O = \partial ( S \setminus R_1^-(S) ) $ and $S_I = \partial ( S \cup R_1^+(S) )$, the neighborhood set to shape $S$ is defined as
+Let $S_O = ( S \cup R_1^+(S) ) $ and $S_I = ( S \setminus R_1^-(S) ) $, the neighborhood set to shape $S$ is defined as
 
 \begin{align*}
-	\mathcal{N}(S,N) = \bigcup_{1 \leq n \leq N} int \big( \; \mathcal{G}_{n}(\partial S, S_I) \;\big) \cup int \big( \; \mathcal{G}_{n}(\partial S, S_O) \; \big),
+	\mathcal{N}(S,N) = \bigcup_{1 \leq n \leq N} int \big( \mathcal{G}_{n}(\partial S_O, \partial S) \; \big) \cup int \big( \;  \; \mathcal{G}_{n}(\partial S, \partial S_I) \; \big),
 \end{align*}
 
 where $int(C)$ is the interior of the shape bounded by oriented curve $C$. Algorithm~\ref{alg:local-search} describes the local combinatorial process and Figure~\ref{fig:local-comb-square-results} presents the digital curve evolution when executing this algorithm for two different shapes with $N=20$.
@@ -468,22 +468,22 @@ where $int(C)$ is the interior of the shape bounded by oriented curve $C$. Algor
 		
 \begin{figure}[!ht]
 \center
-	\subfloat[\label{}]{%
+	\subfloat[h=1.0\label{}]{%
 	\includegraphics[scale=0.125]{images/local_search/square/h1/summary-flow.eps}
 	}%
 	\hspace{10pt}
-	\subfloat[\label{}]{%
+	\subfloat[h=0.5\label{}]{%
 	\includegraphics[scale=0.125]{images/local_search/square/h05/summary-flow.eps}
 	}%
 	\hspace{10pt}
-	\subfloat[\label{}]{%
+	\subfloat[h=1.0\label{}]{%
 	\includegraphics[scale=0.125]{images/local_search/flower/h1/summary-flow.eps}
 	}%
 	\hspace{10pt}
-	\subfloat[\label{}]{%
+	\subfloat[h=0.5\label{}]{%
 	\includegraphics[scale=0.125]{images/local_search/flower/h05/summary-flow.eps}
 	}%
-		\caption{Local combinatorial optimization process results for the square and flower shapes. Grid step $1.0$ in (a),(c) and $0.5$ in (b),(d).}	
+		\caption{Local combinatorial optimization process results for the square and flower shapes. Shapes displayed at every $2$ iterations for the square and $7$ iterations for the flower.}	
 		\label{fig:local-comb-square-results}
 \end{figure}
 
@@ -522,37 +522,43 @@ Square & 47s (5s/it) & 260s (12s/it)\\
 Flower & 1235s (23s/it)  & 8516s (52s/it)\\
 \hline
 \end{tabular}
-\caption{Running times for the local combinatorial optimization algorithm with $k=1,N=20$.}
+\caption{Running times for the local combinatorial optimization algorithm with $k=1,N=20$. Four threads were used.}
 \label{tab:summary-local-comb-rtime}
 \end{minipage}
 \end{figure}
 
 \section{Digital Curvature Flow}
 
-	Let $\Omega_C$ be the collection of connected digital sets in $\Omega$. Given a digital shape $S$, we wish to evolve it into a shape $S^\star$ similar to $S$ but with lower digital elastica energy. We recall the digital curvature estimator definition
-	
-\begin{align}
-	\hat{\kappa}^2(y) &= c_1\Big( c_2 - | B_r(y) \cap S | \Big)^2, 
-	\label{eq:curvature-estimator-pixels}
-\end{align}
+%	Let $\Omega_C$ be the collection of connected digital sets in $\Omega$. Given a digital shape $S$, we wish to evolve it into a shape $S^\star$ similar to $S$ but with lower digital elastica energy. We recall the digital curvature estimator definition
+%	
+%\begin{align}
+%	\hat{\kappa}^2(y) &= c_1\Big( c_2 - | B_r(y) \cap S | \Big)^2, 
+%	\label{eq:curvature-estimator-pixels}
+%\end{align}
+%
+%where $c_1=3/r^6$ and $c_2=\pi r^2/2$. Let $X,Y$ be the set of pixels and linels, respectively, in $\Omega$. We define the following binary model
+%		
+%\begin{align}
+%\text{Minimize}_{x,y} & \sum_{y}{c_1y \Big(c_2 - \sum_{x_j \in B_r(y)}{x_j}\Big)^2	 } + F(S,X_{=1} \cup Y_{=1}) \nonumber \\
+%\text{subject to} & \nonumber \\
+%& (X_{=1} \cup Y_{=1}) \in \Omega_C, \; x,y \in \{0,1\}^\Omega
+%\label{eq:general-binary-formulation}
+%\end{align}
+%
+%
+%where $F$ is some measure of similarity, e.g. distance, between initial shape $S$ and candidate solution. Such term is needed, otherwise the uninteresting empty set would be the optimal solution.
+%
+%Formulation \eqref{eq:general-binary-formulation} is of order four, binary and non-convex. These properties make it a hard optimization problem. We are going to explore an alternative energy, which is a simplification of the former.
 
-where $c_1=3/r^6$ and $c_2=\pi r^2/2$. Let $X,Y$ be the set of pixels and linels, respectively, in $\Omega$. We define the following binary model
-		
-\begin{align}
-\text{Minimize}_{x,y} & \sum_{y}{c_1y \Big(c_2 - \sum_{x_j \in B_r(y)}{x_j}\Big)^2	 } + F(S,X_{=1} \cup Y_{=1}) \nonumber \\
-\text{subject to} & \nonumber \\
-& (X_{=1} \cup Y_{=1}) \in \Omega_C, \; x,y \in \{0,1\}^\Omega
-\label{eq:general-binary-formulation}
-\end{align}
+%\subsection{A first model}
+%
+%We note that the elastica can be decreased by attenuating non-flat regions. The idea is to evolve a flow $S^{(i)}$ where $S^{(i+1)}$ is derived from the minimization of the sum of the squared curvature at $S^{(i)}$. We exchange solving a fourth order energy to solve multiple second order problems. We still have to guarantee that solutions are connected. We handle this issue by limiting the optimization region to a subset of $\Omega$, namely the inner pixel boundary of  $S^{(i)}$.
 
 
-where $F$ is some measure of similarity, e.g. distance, between initial shape $S$ and candidate solution. Such term is needed, otherwise the uninteresting empty set would be the optimal solution.
 
-Formulation \eqref{eq:general-binary-formulation} is of order four, binary and non-convex. These properties make it a hard optimization problem. We are going to explore an alternative energy, which is a simplification of the former.
 
-\subsection{A first model}
 
-We note that the elastica can be decreased by attenuating non-flat regions. The idea is to evolve a flow $S^{(i)}$ where $S^{(i+1)}$ is derived from the minimization of the sum of the squared curvature at $S^{(i)}$. We exchange solving a fourth order energy to solve multiple second order problems. We still have to guarantee that solutions are connected. We handle this issue by limiting the optimization region to a subset of $\Omega$, namely the inner pixel boundary of  $S^{(i)}$.
+	Given a digital shape $S \in \Omega$, the idea is to evolve a flow $S^{(i)}$ where $S^{(i+1)}$ is derived from the minimization of the sum of the squared curvature at $S^{(i)}$. In order to guarantee connectivity, we limit the optimization region to a subset of $\Omega$, namely the inner pixel boundary of  $S^{(i)}$. 
 
 \begin{definition}[Inner pixel boundary]
 {
@@ -564,24 +570,32 @@ where $\mathcal{N}_4(x)$ denotes the $4$-adjacent neighbor set of $x$ (without $
 }
 \end{definition}
 
-In other words, each flow iteration decides which pixels in the inner boundary are to be removed and which are to be kept. To simplify notation, we denote the optimization region of $S^{(i)}$ as $O^{(i)}$. We define the foreground set $F^{(i)} = S^{(i)} \setminus O^{(i)}$.
+In other words, each flow iteration decides which pixels in the inner boundary are to be removed and which are to be kept. To simplify notation, we denote the optimization region of $S^{(i)}$ as $O^{(i)}$, and the foreground set as $F^{(i)} = S^{(i)} \setminus O^{(i)}$. We recall the digital curvature estimator definition
+	
+\begin{align}
+	\hat{\kappa}^2(y) &= c_1\Big( c_2 - | B_r(y) \cap S | \Big)^2, 
+	\label{eq:curvature-estimator-pixels}
+\end{align}
 
-In order to be symmetric, the curvature at some linel $y$ is computed on $R_m(S)$. We define $O_{r}^{(i)}(y) = O^{(i)} \cap B_r(y)$ and an analogous definition holds for $F_{r}^{(i)}(y)$. Expanding \eqref{eq:curvature-estimator-pixels}, we get 
+where $c_1=3/r^6$ and $c_2=\pi r^2/2$. 
+
+We define $O_{r}^{(i)}(y) = O^{(i)} \cap B_r(y)$ and an analogous definition holds for $F_{r}^{(i)}(y)$. Expanding \eqref{eq:curvature-estimator-pixels}, we get 
 
 	\begin{align*}
 		\hat{\kappa}^2(y) &= c_1\Big( c_2 - \sum_{x_j \in B_r(y)} \big( {x_j} + |F_{r}^{(i)}(y)| \big) \Big)^2 \\
 		\hat{\kappa}_{r}^2(y) &= c_1 \cdot \Big( C + 2\left( |F_{r}^{(i)}(y)| - c_2 \right) \sum_{x_j \in O_{r}^{(i)}(y)}{x_j} + \sum_{x_j \in O_{r}^{(i)}(y)}{x_j^2} + \sum_{ \substack{x_j,x_k \in O_{r}^{(i)}(p) \\ j<k} }{2x_jx_k}  \Big),
 	\end{align*}
 	
-	where $C=c_2^2 - 2c_2 \cdot |F_{r}^{(i)}(y)| + |F_{r}^{(i)}(y)|^2$. We proceed by minimizing the sum of squared curvatures along $R_m(S)$. By ignoring constants and multiplication factors and using the binary character of the variables, we define the following family of energies
+	where $C=c_2^2 - 2c_2 \cdot |F_{r}^{(i)}(y)| + |F_{r}^{(i)}(y)|^2$. In order to be symmetric, the curvature at some linel $y$ is computed on $R_m(S)$. By ignoring constants and multiplication factors and using the binary character of the variables, we define the following family of energies for given parameters $\alpha,\beta \geq 0$.
 	
 	\begin{align}
-		E_m(X,S) = \sum_{y \in R_m(S)}{ \Big( { (1/2+ |F_{r}^{(i)}(y)|-c_2) \cdot \sum_{x_j \in O_{r}^{(i)}(y)}{x_j} } + \sum_{ \substack{x_j,x_k \in O_{r}^{(i)}(y) \\ j<k} }{x_jx_k} \Big) }.
+		E_m(X,S) =& \sum_{x \in X}{\alpha s(x)} \nonumber \\ 
+		& + \sum_{y \in R_m(S)}{ \beta \Big( { (1/2+ |F_{r}^{(i)}(y)|-c_2) \cdot \sum_{x_j \in O_{r}^{(i)}(y)}{x_j} } + \sum_{ \substack{x_j,x_k \in O_{r}^{(i)}(y) \\ j<k} }{x_jx_k} \Big) } \nonumber \\
+		& + \sum_{x \in X}{\gamma g(S,x)}
 		\label{eq:energy-family}
 	\end{align}
 	
-	Each choice of $m$ generates a different flow, which is generaly described in the DCE algorithm \ref{alg:evolution-model}.
-
+	where $g(S,x)$ denotes a similarity term as distance to initial shape $S$ or data fidelity term and $s(x)$ denotes a length penalization term. Each choice of $m$ generates a different flow, which is generaly described in the DCE algorithm \ref{alg:evolution-model}.
 
 
 \begin{algorithm}[H]
@@ -591,20 +605,20 @@ In order to be symmetric, the curvature at some linel $y$ is computed on $R_m(S)
  \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
  \SetKwComment{comment}{//}{}
  
- \Input{A digital set $S$; The ring number $m$; the maximum number of iterations \MIt;}
+ \Input{A digital set $S$; The ring number $m$; Length($\alpha$), curvature($\beta$) and similarity($\gamma$) coefficients; the maximum number of iterations \MIt;}
  \BlankLine
  $S^{(i)} \longleftarrow S$\;
  \While{ \It $<$ \MIt  }{ 	
 	\comment{Expansion mode}
 	\If{ \It is odd }{	 
-	 	$Z^{(i)} \longleftarrow \argmin_Z E_m(Z,\overline{S^{(i)}})$\;
- 		$S^{(i)} \longleftarrow F^{(i)} + \overline{Z^{(i)}}$\;
+	 	$X^{(i)} \longleftarrow \argmin_X E_m(X,\overline{S^{(i)}})$\;
+ 		$S^{(i)} \longleftarrow F^{(i)} + \overline{X^{(i)}}$\;
  		$S^{(i)} \longleftarrow \overline{S^{(i)}}$\;	 	
  	}
 	\comment{Shrinking mode} 	
  	\Else{	
-	 	$Z^{(i)} \longleftarrow \argmin_Z E_m(Z,S^{(i)})$\; 	
- 		$S^{(i)} \longleftarrow F^{(i)} + \overline{Z^{(i)}}$\;
+	 	$X^{(i)} \longleftarrow \argmin_X E_m(X,S^{(i)})$\; 	
+ 		$S^{(i)} \longleftarrow F^{(i)} + \overline{X^{(i)}}$\;
  	}
  	
 	\It $\longleftarrow$ \It $+1$\;
@@ -616,20 +630,34 @@ In order to be symmetric, the curvature at some linel $y$ is computed on $R_m(S)
 
 
 
-Recall that II estimates curvature by computing the difference between half of the estimation ball area and the intersection of such ball with the shape.  In particular, regions of positive curvature have fewer pixels in its intersection set than on its complement wrt the estimation ball. This implies that variables in such regions are labeled one, as the unbalance grows otherwise. We attenuate curvature if we shift the center of the estimation ball towards the interior of the shape, which means removing the labeled one pixels. That's why we take the complement of the optimization solution. 
+Recall that II estimates curvature by computing the difference between half of the estimation ball area and the intersection of such ball with the shape.  In particular, regions of positive curvature have fewer pixels in its intersection set than on its complement wrt the estimation ball. This implies that variables in such regions are labeled one, as the unbalance grows otherwise. We attenuate curvature if we shift the center of the estimation ball towards the interior of the shape, which means removing the labeled one pixels. That's why we take the complement of the optimization solution.
 
 The same reasoning applies for non-convex parts. Indeed, concave regions are convex in the shape complement. In the expasion mode we apply the same reasoning on the image complement, and by doing this we are able to handle concavities. It is called expansion mode because the optimization region, in this case, is the outer pixel boundary of the original shape. 
+
+Length and similarity terms should be properly defined in order to comply with the complement step of the DCE algorithm. The length penalization is defined as
+
+	\begin{align}
+		s(x)=\sum_{x_j \in \mathcal{N}_4(x)}{ t(x_j) }, \quad \text{where } t(x_j) = \left\{\begin{array}{ll}
+		(x-x_j)^2, & \text{if } x_j \in O_{r}^{(i)}\\
+		(x-0), & \text{if } x_j \in F_{r}^{(i)}\\
+		(x-1), & \text{otherwise }
+		\end{array}\right.
+		\label{eq:length-penalization}
+	\end{align}
+	
+	We do not use a similarity term in this section, thus we postpone the definition of such term until the description of how DCE can be used in a image segmentation framework.
+
 
 
 \begin{table}
   \center
   \begin{tabular}{|c|c|c|c|} \hline
     shrink mode &    $\kappa \gg 0$ & $\kappa \geq 0$ &  $\kappa < 0$ \\ \hline
-    $Z$ & $x_k=1$ & $x_k \in \{0,1\}$ & $x_k=0$ \\ \hline
-    $S^{(i+1)} \leftarrow S^{(i)} \setminus Z$ & eroded & prob. eroded & unchanged  \\ \hline \hline
+    $X$ & $x_k=1$ & $x_k \in \{0,1\}$ & $x_k=0$ \\ \hline
+    $S^{(i+1)} \leftarrow S^{(i)} \setminus X$ & eroded & prob. eroded & unchanged  \\ \hline \hline
     expansion mode &    $\bar{\kappa} \gg 0$ & $\bar{\kappa} \geq 0$ & $\bar{\kappa} < 0$ \\ \hline
-    $\bar{Z}$ & $\bar{x}_k=1$ & $\bar{x}_k \in \{0,1\}$ & $\bar{x}_k=0$ \\ \hline
-    $S^{(i+1)} \leftarrow \overline{\bar{S}^{(i)} \setminus \bar{Z}}$ & dilated & prob. dilated & unchanged \\ \hline 
+    $\bar{X}$ & $\bar{x}_k=1$ & $\bar{x}_k \in \{0,1\}$ & $\bar{x}_k=0$ \\ \hline
+    $S^{(i+1)} \leftarrow \overline{\bar{S}^{(i)} \setminus \bar{X}}$ & dilated & prob. dilated & unchanged \\ \hline 
   \end{tabular}
   
   \label{tab:flow-summary}	  
@@ -638,7 +666,7 @@ The same reasoning applies for non-convex parts. Indeed, concave regions are con
 \end{table}
 
 
-In figure \ref{fig:m1-square-flow} we see some results for the DCE algorithm  with $m=1$. We observe a global movement towards roundness, but with several artifacts. We minimize the effects of a jaggy boundary by including a length penalization, weighted by some coefficient $\alpha$. Nonetheless, a higher estimation ball radius creates unstable shapes. In fact, the estimator is very sensitive in regions of low squared curvature, and its precisely in those regions which spurious pixels are included.
+In figure \ref{fig:m1-square-flow} we see some results for the DCE algorithm  with $m=1$. We observe a global movement towards roundness, but with several artifacts. We minimize the effects of a jaggy boundary by setting $\alpha > 0$. Nonetheless, a higher estimation ball radius creates unstable shapes. In fact, the estimator is very sensitive in regions of low squared curvature, and its precisely in those regions which spurious pixels are included.
 
 
 \begin{figure}[!ht]
@@ -693,7 +721,7 @@ In the previous section we notice that the algorithm produces shapes with many a
 \caption{By positioning the estimation ball on farther rings, we minimize artifacts creation. }
 \end{figure}
 
-In our experiments, the best results are obtained by executing DCE algorithm with $m=r$, where $r$ is the estimation ball radius. In plot \ref{fig:mx-elastica-plots}, we observe how the elastica evolves along the iterations. If the radius is too large, the elastica increases starting from a critical point $p$. That's what happens for the triangle, in which the flow converges to a single point. 
+In our experiments, the best results are obtained by executing DCE algorithm with $m=r$, where $r$ is the estimation ball radius (see figures \ref{fig:mx-square-flow}, \ref{fig:mx-flow-gs-radius-effect} ). In plot \ref{fig:mx-elastica-plots}, we observe how the elastica evolves along the iterations. If the radius is too large, the elastica increases starting from a critical point $p$. That's what happens for the triangle, in which the flow converges to a single point. 
 
 
 \begin{figure}[!ht]
@@ -723,10 +751,8 @@ In our experiments, the best results are obtained by executing DCE algorithm wit
 		\subfloat{%
 \includegraphics[scale=0.2]{images/flow/grid-radius-effect/flower/r5-h0.5/summary_flow.eps}}%
 		}				
-		
-		
+\caption{The choice of radius impacts the flow. In the figures, the flow ceases to evolve for all shapes  when $r=3$ (a). In figure (b), for $r=5$, the triangle evolves to a single point, while the others stop  in an intermediate shape, as in (a). }
 \label{fig:mx-flow-gs-radius-effect}
-\caption{The choice of radius has an impact on the flow. In the figures, the flow ceases to evolve for all shapes  when $r=3$ (a). In figure (b), for $r=5$, the triangle evolves to a single point, while the other shapes stop  evolution, but further than in (a). }
 \end{figure}
 
 \begin{figure}[!ht]
@@ -789,46 +815,29 @@ We have used QPBOI to solve $E_m$. Naturally, in the case that all pixels are la
 \subfloat[]{ \includegraphics[scale=0.35]{images/optimization/unlabeled-iterations/radius-5/plot-model-flower-concavities-probe.eps}}\\%
 \subfloat[]{ \includegraphics[scale=0.35]{images/optimization/unlabeled-iterations/radius-7/plot-model-flower-concavities-probe.eps}}%
 \end{minipage}
-\caption{The number of unlabeled pixels by QPBOP remains high for lower values of $m$, and goes to zero when $m=r$. We observe the same behaviour for different radius values.}
+\caption{For each plot, we first produce shapes $\left\{ S^{(i)} \right\}$ executing DCE with $m=r$. Then, for each shape in $\left\{ S^{(i)} \right\}$, we execute one iteration of DCE for different values of $m$ and we count the unlabeled pixels. The number of unlabeled pixels by QPBOP remains high for lower values of $m$, and goes to zero when $m=r$. We observe the same behaviour for different radius values.}
 \label{fig:unlabeled-versus-iterations}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[scale=0.5]{images/optimization/pairwise-ratio/plot-pairwiseratio-lowerHigher-concavities-probe.eps}
-\caption{We plot the ratio of pairwise terms among all $\binom{|X|}{2}$ combinations. The highest ring has rougly half the number of pairwise terms  than the lowest ring.}
+\caption{We plot the ratio of pairwise terms among all $\binom{|X^{(i)}|}{2}$ combinations. The highest ring has rougly half the number of pairwise terms  than the lowest ring.}
 \end{figure}
 
 
 
 \section{Application in image segmentation}
 
-We present an application in supervised image segmentation for the digital evolution described in the previous section. We include a data fidelity $g(\cdot)$ and a length penalization $s(\cdot)$ terms in energy $E_m$. At iteration $i$, we minimize
-
-\begin{align}			
-	\min_{Y^{(i)}} \sum_{y \in Y^{(i)}}{\Big( \gamma \cdot g(y) + \alpha \cdot s(y) \Big)} + \sum_{y \in R_r(S^{(i)})}{ \beta \cdot \hat{\kappa}_{r}^2(y)}.
-	\label{eq:boundary-correction-energy}
-\end{align}
+We present an application in supervised image segmentation for the digital evolution described in the previous section. Here we are going to use a data fidelity term. Given foreground and background seeds selected by the user, we derive mixed gaussian distributions  of color intensities $G_f$ and $G_b$, and we define the data fidelity term as
 	
-	Let $\mathcal{N}_4(y)$ denote the four neighborhood of pixel $y$. Length penalization is defined as
+	\begin{align}
+		g(y) = -(1-y)\log{G_f(I(y))} - y\log{G_b(I(y))}.
+		\label{eq:data-fidelity}
+	\end{align}	
 	
-	
-	\begin{align*}
-		s(y)=\sum_{y_j \in \mathcal{N}_4(y)}{ t(y_j) }, \quad \text{where } t(y_j) = \left\{\begin{array}{ll}
-		(y-y_j)^2, & \text{if } y_j \in O_{r}^{(i)}\\
-		(y-0), & \text{if } y_j \in F_{r}^{(i)}\\
-		(y-1), & \text{otherwise }
-		\end{array}\right.
-	\end{align*}
-	
-	Given foreground and background seeds selected by the user, we derive mixed gaussian distributions  of color intensities $G_f$ and $G_b$, and we define the data fidelity term as
-	
-	\begin{align*}
-		g(y) = -(1-y)\log{G_f(I(y))} - y\log{G_b(I(y))}
-	\end{align*}
-	
-	Notice that data and length terms are defined in such a way in order to comply with DCE algorithm, in which we take the complement of the optimal solution. 
-	
+The contour correction algorithm regularizes a given initial contour by evolving the DCE algorithm using 
+\eqref{eq:data-fidelity} as the similarity term.
 	
 \begin{algorithm}[H]
  \SetKwData{It}{i}
@@ -923,10 +932,10 @@ Seeds & $(\alpha=0, \beta=0.5)$ & $(\alpha=0,\beta=1)$ \\
 \end{figure}
 
 
-We evaluate our method using the BSD300 database \cite{martinFTM01berkeley}. All images contains the same number of pixels, the resolution being 321x481 in portrait mode. We compare the results of our method with segmentations given by GrabCut and Schoenemanns's method \cite{schoenemann09linear}. We report an average of $3s$ per flow iteration, and an average of $30$ iterations per image. While GrabCut executes in less than one second, Schoenemann's method may take $2$ hours to complete.
+We evaluate our method using the BSD300 database \cite{martinFTM01berkeley}. All images contains the same number of pixels, the resolution being 321x481 in portrait mode. We compare the results of our method with segmentations given by GrabCut and Schoenemanns's method \cite{schoenemann09linear}. We report an average of $3s$ per flow iteration, and an average of $30$ iterations per image. While GrabCut executes in less than one second, Schoenemann's method may take several hours to complete.
 
 
-In figure \ref{fig:parameters-influence} we can observe the results of a curvature regularization in comparison with a pure length regularization, and figure \ref{fig:segmentation-results} shows some segmentation results.
+In figure \ref{fig:parameters-influence} we can observe the results of a curvature regularization in comparison with a pure length regularization, and figures \ref{fig:segmentation-results} and \ref{fig:more-segmentation-results} show some segmentation results.
 
 
 
@@ -935,7 +944,7 @@ In figure \ref{fig:parameters-influence} we can observe the results of a curvatu
 
 We've described two digital evolutions models based on the elastica energy and we've presented an application of one of them in image segmentation. The processes we've described are completely digital, and do not suffer from issues that typically arises in models that passes through a discretization stage, as rounding. Moreover, the model can handle changes in topology and its results are competitive with similar approaches while achieving a reasonable running time. 
 
-Future developments of this work may include automatization, no more dependence on seeds selected by the user and automatic choice of radius based on the reach of the shape. One can also think to extend the model to the $3$d case, as the integral invariant estimator preserves its properties in that space. In the latter, a denoising application may be derived by running the flow on the $3$d shape defined by color and position.
+Future developments of this work may include automatization, no more dependence on seeds selected by the user and automatic choice of radius based on the reach of the shape. One can also think to extend the DCE algorithm to $3$d, as the integral invariant estimator preserves its properties in that space. In the latter, a denoising application may be derived by running the flow on the $3$d shape defined by color and position.
 
 
 
