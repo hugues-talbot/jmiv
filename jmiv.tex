@@ -372,13 +372,17 @@ In the remaining of this paper we are going to be interested in the minimization
   \label{eq:elastica}
 \end{align}
 
-The digital version of elastica energy, using multigrid convergent estimators is defined as
+The digital version of elastica energy approaching the continuous elastica energy is defined as follows (it uses multigrid convergent estimators):
 \begin{align}
-	\hat{E}( D_h(X) ) = \sum_{x \in \partial D_h(X)}{ \hat{s}(x)\left(\; \alpha + \beta \hat{\kappa}_{r}^2(D_h(X),x,h) \; \right)}.
+	\hat{E}( D_h(X) ) = \sum_{\vec{e} \in \partial D_h(X)}{ \hat{s}(\vec{e})\left(\; \alpha + \beta \hat{\kappa}_{r}^2(D_h(X),\dot{\vec{e}},h) \; \right)},
 	\label{eq:digital-energy}
 \end{align}
-
- In the following we omit the grid step $h$ to simplify expressions (or, putting it differently, we assume that $X$ is rescaled by $1/h$ and we set $h=1$).
+where $\dot{\vec{e}}$ denotes the center of the edge $\vec{e}$. In the
+expression above, we will substitute an arbitrary subset $Z$ of
+$\mathbb{Z}^2$ to $D_h(X)$ since the continuous shape $X$ is unknown.
+In the following we omit the grid step $h$ to simplify expressions
+(or, putting it differently, we assume that the shape of interest is
+rescaled by $1/h$ and we set $h=1$).
 
 \section{Local combinatorial optimization}
 
