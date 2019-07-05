@@ -221,24 +221,27 @@ an image segmentation framework.
 
 
 \section{Multigrid convergent estimators \todo{(Mostly copy/paste)}}
-The goal of this section is to  introduce the concept of multigrid convergent and its interest in the analysis of digital images.
-\begin{itemize}
-	\item{Why to use multigrid convergent estimators}
-	\item{Multigrid convergence for local estimators}
-	\item{Reference to examples of multigrid digital estimators(for curvature, length, tangent)}
-	\item{Define the elastica energy estimator}
-	\item{\test{(Jaco) see if two opposite II evaluations give convergent curvature}}
-\end{itemize}
 
-\hrulefill
+The goal of this section is to  introduce the concept of multigrid convergenc and its potential when analyzing digital images with variational models involving geometric quantities. More precisely we wish to delineate shapes within digital images with some priors related to their unknown continuous geometry. Of course we only observe shape digitizations within images.
+%% \begin{itemize}
+%% 	\item{Why to use multigrid convergent estimators}
+%% 	\item{Multigrid convergence for local estimators}
+%% 	\item{Reference to examples of multigrid digital estimators(for curvature, length, tangent)}
+%% 	\item{Define the elastica energy estimator}
+%% 	\item{\test{(Jaco) see if two opposite II evaluations give convergent curvature}}
+%% \end{itemize}
 
-A digital image is the result of some quantization process over an object $X$ lying in some continuous space of
-dimension $2$ (here).  For example, the Gauss digitization of $X$ with grid step $h>0$ is defined as
+%% \hrulefill
+
+A digital shape is the result of some quantization process over an
+object $X$ lying in some continuous space of dimension $2$ (here).
+For example, the Gauss digitization of a continuous subset $X$ of the
+Euclidean plane $\mathbb{R}^2$ with grid step $h>0$ is defined as
 \begin{align*}
 	D_h(X) = X \cap (h\mathbb{Z})^2.
 \end{align*} 
 
-Given an object $X$ and its digitization $D_h(X)$, a digital estimator $\hat{u}$ for some geometric quantity $u$ is
+Given a shape $X$ and its digitization $D_h(X)$, a digital estimator $\hat{u}$ for some geometric quantity $u$ is
 intended to compute $u(X)$ by using only the digitization. This problem is not well-posed, as the same digital object
 could be the digitization of infinitely many objects very different from $X$. Therefore, a characterization of what constitutes
 a good estimator is necessary.
@@ -271,8 +274,9 @@ $\partial_h X$.
 For a global geometric quantity (e.g. perimeter, area, volume), the definition remains the same, except that the mapping
 between $\partial X$ and $\partial_h X$ is no longer necessary.
 	
-Multigrid convergent estimators provide a quality guaranty and should be preferred over non-multigrid convergent
-ones. In the next section, we describe two estimators that are important for our purpose.
+Multigrid convergent estimators provide a quality guarantee and should
+be preferred over non-multigrid convergent ones. In the next section,
+we describe two estimators that are important for our purpose.
 
 \subsection{Tangent and Perimeter Estimators}
 
@@ -282,23 +286,27 @@ of length and we wish that integration over these local length elements gives a 
 perimeter.
 
 \begin{definition}[Elementary Length]
-  Let a digital curve $C$ be represented as a sequence of grid vertices in a grid cell representation of digital objects (in grid with step $h$). Further, let $\vec{ \hat{v} }$ be a multigrid convergent estimator for the tangent vector. The elementary length $\hat{s}(\vec{e})$ at some oriented grid edge $ \vec{e} \in C$ is defined as
+  Let a digital curve $C$ be represented as a sequence of grid vertices in a grid cell representation of digital objects (in a grid with step $h$). Further, let $\vec{ \hat{v} }$ be a multigrid convergent estimator for the unit tangent vector. The elementary length $\hat{s}(\vec{e})$ at some oriented grid edge $ \vec{e} \in C$ is defined as
   \begin{align*}
-    \hat{s}(\vec{e}) = h \cdot \vec{\hat{v}}(\vec{e}) \cdot \vec{e}.
+    \hat{s}(\vec{e}) = h ~\vec{\hat{v}}(\vec{e}) \cdot \vec{e}.
   \end{align*}
 \end{definition}
 The integration of the elementary length along the digital curve is a multigrid convergent estimator for perimeter if
 one uses the $\lambda$-MST \cite{lachaud07tangent} tangent estimator (see \cite{lachaud06hdr}).
 
 \subsection{Integral Invariant Curvature Estimator}
-Generally, an invariant $\sigma$ is a real-valued function from some space $\Omega$ which value is unaffected by the action
-of some group $\mathfrak{G}$ on the elements of the domain
-\begin{align*}
-  x \in \Omega, g \in \mathfrak{G}, \sigma(x) = v \longleftrightarrow \sigma(g \cdot x ) = v.
-\end{align*}
-Perimeter and curvature are examples of invariants for shapes on $\mathbb{R}^2$ with respect to the euclidean group
-(rigid transformations). Definition of integral area invariant and its one-to-one correspondence with curvature is
-proven in \cite{manay04intinvariant}.
+Generally speaking, an invariant is a function whose value is unaffected by the action
+of some group on the elements of the domain.
+%% Jaco: trop général, et pas utilisé après
+%% Generally speaking, an invariant $\sigma$ is a real-valued function from some space $\Omega$ which value is unaffected by the action
+%% of some group $\mathfrak{G}$ on the elements of the domain
+%% \begin{align*}
+%%   x \in \Omega, g \in \mathfrak{G}, \sigma(x) = v \longleftrightarrow \sigma(g \cdot x ) = v.
+%% \end{align*}
+Perimeter and curvature are examples of invariants for shapes on
+$\mathbb{R}^2$ with respect to the euclidean group of rigid
+transformations. Definition of integral area invariant and its link
+with curvature is proven in \cite{manay04intinvariant}.
 
 
 \begin{definition}[Integral area invariant]
@@ -311,10 +319,11 @@ proven in \cite{manay04intinvariant}.
 \end{definition}
 
 
-The value $\sigma_{X,r}(p)$ is the intersection area of ball $B_r(p)$ with shape $X$. By locally approximating the shape
-at point $p \in X$, one can rewrite the intersection area $\sigma_{X,r}(p)$ in the form of the Taylor expansion
-\cite{pottman09intinvariant}
-	
+The value $\sigma_{X,r}(p)$ is the area of the intersection of the
+ball $B_r(p)$ with shape $X$. By approaching the shape at
+point $p \in X$, one can rewrite the intersection area
+$\sigma_{X,r}(p)$ in the form of the Taylor expansion
+\cite{pottman09intinvariant}:
 \begin{align*}
   \sigma_{X,r}(p) = \frac{\pi}{2}r^2 - \frac{\kappa(X,p)}{3}r^3 + O(r^4),
 \end{align*}
@@ -329,16 +338,18 @@ where $\kappa(X,p)$ is the curvature of $X$ at point $p$. By isolating $\kappa$ 
 Such an approximation is convenient as one can simply devise a multigrid convergent estimator for the area.
 
 \begin{definition}	
-  Given a digital shape $D \subset (h \mathbb{Z})^2$, a multigrid convergent estimator for the area $\widehat{Area}(D,h)$ is defined as	
-		
+  Given a digital shape $D \subset (h \mathbb{Z})^2$,  the area estimatir $\widehat{Area}(D,h)$ is defined as	
   \begin{align}
     \widehat{Area}(D,h) \coloneqq h^2\text{Card}\left( D \right).	
     \label{eq:digital_estimator_area}
   \end{align}
 \end{definition}
-	
-In \cite{coeurjolly13integral}, the authors combine the approximation\eqref{eq:curvature_approximation} and digital estimator
-\eqref{eq:digital_estimator_area} to define a multigrid convergent estimator for the curvature.
+It is well known that this area estimator is multigrid convergent
+(e.g. see \cite{klette2000multigrid}).  In
+\cite{coeurjolly13integral}, the authors combine the
+approximation\eqref{eq:curvature_approximation} and digital estimator
+\eqref{eq:digital_estimator_area} to define a multigrid convergent
+estimator for the curvature.
 
 \begin{definition}[Integral Invariant Curvature Estimator]
   Let $D \subset (h \mathbb{Z})^2$ a digital shape. The integral invariant curvature estimator is defined as
@@ -348,20 +359,20 @@ In \cite{coeurjolly13integral}, the authors combine the approximation\eqref{eq:c
   \end{align*}
 \end{definition}
 
-
-This estimator is robust to noise and can be extended to estimate the mean curvature of three dimensional shapes.
+This estimator is multigrid convergent with speed $O(h^\frac{1}{3})$
+for radii chosen as $r=\Theta(h^\frac{1}{3})$.  This estimator is also
+robust to noise and can be extended to estimate the mean curvature of
+three dimensional shapes.
 
 \subsection{Elastica energy estimator}
 
-In the remaining of this paper we are going to be interested in the minimization of the elastica energy. Given an euclidean shape $X$, the elastica is defined as
-
+In the remaining of this paper we are going to be interested in the minimization of the elastica energy. Given a Euclidean shape $X$ with smooth enough boundary, the elastica is defined as
 \begin{align}
   E(X) = \int_{\partial X}{(\alpha + \beta \kappa^2) ds}, \quad \text{for~} \alpha \ge 0, \beta \ge 0.
   \label{eq:elastica}
 \end{align}
 
-The digital version of elastica, using multigrid convergent estimators is defined as
-
+The digital version of elastica energy, using multigrid convergent estimators is defined as
 \begin{align}
 	\hat{E}( D_h(X) ) = \sum_{x \in \partial D_h(X)}{ \hat{s}(x)\left(\; \alpha + \beta \hat{\kappa}_{r}^2(D_h(X),x,h) \; \right)}.
 	\label{eq:digital-energy}
