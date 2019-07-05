@@ -386,40 +386,39 @@ rescaled by $1/h$ and we set $h=1$).
 
 \section{Local combinatorial optimization}
 
-The objectives of this section is to show both the potential of minimizing a purely digital Elastica energy but also to underline the difficulties of using it in a global combinatorial optimization framework.
+The objectives of this section is to show both the potential of minimizing a purely digital elastica energy but also to underline the difficulties of using it in a global combinatorial optimization framework.
 
-Given a digital shape $S^{(0)}$ we describe a process that generates a sequence $S^{(i)}$ of shapes with non-increasing
-elastica energy. The idea is to define a neighborhood of shapes
-$\mathcal{N}^{(i)}$ to the shape $S^{(i)}$ and choose the element of
-$\mathcal{N}^{(i)}$ with lowest energy.  The process is suited for the
-integral invariant estimator but also for other curvature estimators,
-for example, MDCA \cite{roussillon11mdca}.
+Given a digital shape $S^{(0)}$ we describe a process that generates a
+sequence $S^{(i)}$ of shapes with non-increasing elastica energy. The
+idea is to define a neighborhood of shapes $\mathcal{N}^{(i)}$ to the
+shape $S^{(i)}$ and choose the element of $\mathcal{N}^{(i)}$ with
+lowest energy.  The process is suited for the integral invariant
+estimator but also for other curvature estimators, for example, MDCA
+\cite{roussillon11mdca}. As a matter of fact, our experiments have
+shown that either estimators induce similar results.
 
 Let $S$ be a $2$-dimensional digital shape. We adopt the cellular-grid model to represent $S$, i.e., pixels and its lower dimensional counterparts, linels and pointels, are part of $S$. In particular, we denote by $\partial S$ the topological boundary of $S$, i.e., the connected sequence of linels such that for each linel we have one of its incident pixels in $S$ and the other not in $S$.
 
 
-Let $d_{S}:\Omega \rightarrow \mathcal{R}$ be the euclidean distance transformation with respect to shape $S$. The value $d_S(x)$ gives the euclidean distance between $x$ and the closest pixel in $S$. 
+Let $d_{S}:\Omega \rightarrow \mathcal{R}$ be the Euclidean distance transformation with respect to shape $S$. The value $d_S(x)$ gives the Euclidean distance between $x$ and the closest pixel in $S$. 
 
 \begin{definition}[m-Ring Set]
-Given a digital shape $S\in\Omega$, its distance transformation $d_S$ and natural numbers $m > 0$, we define its $m$-ring set as
-
+Given a digital shape $S\in\Omega$, its distance transformation $d_S$ and natural numbers $m > 0$, the {\em $m$-ring set of $S$} is defined as
 \begin{align*}
-	\quad R_m(S) &= R_m^-(S) \; \cup \; R_m^+(S) \\
-	&= \left\{ x \in \Omega \; | \; m-1 < d_S(x) \leq m \right\} \; \cup \;  \left\{ x \in \Omega \; | \; 	m-1 < d_{\overline{S}}(x) \leq m \right\}\\
+	\quad R_m(S) &:= R_m^-(S) \; \cup \; R_m^+(S) \\
+	&:= \left\{ x \in \Omega \; | \; m-1 < d_S(x) \leq m \right\} \; \cup \;  \left\{ x \in \Omega \; | \; 	m-1 < d_{\overline{S}}(x) \leq m \right\}.
 \end{align*}
-
 \end{definition}
 
 Consider the following set of neighbor candidates to $S$:
-
 \begin{align*}
-\mathcal{U}(S) = \{ D \; | D \subset R_1(S) \cup S \; \text{and} \; \text{$D$ is connected}. \}
+\mathcal{U}(S) = \{ D \; | D \subset R_1(S) \cup S \; \text{and} \; \text{$D$ is connected} \}.
 \end{align*}
 
 
 Such set can be extremely large and its complete exhaustion is prohibitively expensive.  Instead, we explore a subset of it with the help of $n$-glued curves.
 
-An oriented closed curve $C$ is a sequence of linels. A segment of $C$ is a subsequence $c \in C$ of its linels.
+An oriented closed curve $C$ is a closed connected sequence of linels with a well-defined interior. A segment of $C$ is a connected subsequence $c \in C$ of its linels.
 
 \begin{figure}
 \center
@@ -438,19 +437,17 @@ Given closed curves $C_1,C_2$ agreeing with some orientation $q$, a glued curve 
 
 \begin{definition}[$n$-Glued Curve Set]
 Given closed curves $C_1,C_2$ with same orientation, its set of $n$-glued curves is defined as
-
 \begin{align*}
 	\mathcal{G}_n(C_1,C_2) = \{ (c_1,\ell_1,c_2,\ell_2) \; | \; |c_2|=n \},
 \end{align*}
 \end{definition}
 
 Let $S_O = ( S \cup R_1^+(S) ) $ and $S_I = ( S \setminus R_1^-(S) ) $, the neighborhood set to shape $S$ is defined as
-
 \begin{align*}
 	\mathcal{N}(S,N) = \bigcup_{1 \leq n \leq N} int \big( \mathcal{G}_{n}(\partial S_O, \partial S) \; \big) \cup int \big( \;  \; \mathcal{G}_{n}(\partial S, \partial S_I) \; \big),
 \end{align*}
 
-where $int(C)$ is the interior of the shape bounded by oriented curve $C$. Algorithm~\ref{alg:local-search} describes the local combinatorial process and Figure~\ref{fig:local-comb-square-results} presents the digital curve evolution when executing this algorithm for two different shapes with $N=20$.
+where $int(C)$ is the interior of the shape bounded by the close oriented curve $C$. Algorithm~\ref{alg:local-search} describes the local combinatorial process and Figure~\ref{fig:local-comb-square-results} presents the digital curve evolution when executing this algorithm for two different shapes with $N=20$.
 
 
 \begin{algorithm}
@@ -504,16 +501,16 @@ where $int(C)$ is the interior of the shape bounded by oriented curve $C$. Algor
 
 
 The running time of algorithm \ref{alg:local-search} is summarized in
-table \ref{tab:summary-local-comb-rtime}. All the experiments in this paper were executed in a five core $3.4Ghz$ cpu and the number of pixels in the triangle, square and flower shapes are respectively $841,1867,521$ for grid step $h=1.0$. Although its use in practical applications is limited, we
-demonstrate that digital estimators are effective in its measurements
-and the evolved flows behave as expected. We observe that is a
+table \ref{tab:summary-local-comb-rtime}. All the experiments in this paper were executed on a five core $3.4Ghz$ cpu and the number of pixels in the triangle, square and flower shapes are respectively $841,1867,521$ for grid step $h=1.0$. Although its use in practical applications is limited, we
+demonstrate that digital estimators are effective in their measurements
+and the flows evolve as expected. We observe that it is a
 complete digital approach, and we do not suffer from discretization
 and rounding problems, a common issue in continuous models.
 Furthermore we have checked that this approach works
-  indifferently with Integral Invariant curvature estimator and
-  Maximal Digital Circular Arc curvature estimator. So the convergence
-  of the digital curvature estimator seems to be the cornerstone to
-  get a digital curve behaving like a continuous elastica.  In the
+indifferently with Integral Invariant curvature estimator and
+Maximal Digital Circular Arc curvature estimator. So the convergence
+of the digital curvature estimator seems to be the cornerstone to
+get a digital curve behaving like a continuous elastica.  In the
 next section, we explore a more efficient approach.
 
 
