@@ -570,44 +570,44 @@ Flower & 1235s (23s/it)  & 8516s (52s/it)\\
 
 
 
-	Given a digital shape $S \in \Omega$, the idea is to evolve a flow $S^{(i)}$ where $S^{(i+1)}$ is derived from the minimization of the sum of the squared curvature at $S^{(i)}$. In order to guarantee connectivity, we limit the optimization region to a subset of $\Omega$, namely the inner pixel boundary of  $S^{(i)}$. 
+Given a digital shape $S \in \Omega$, the idea is to evolve a flow $S^{(i)}$ where $S^{(i+1)}$ is derived from the minimization of the sum of the squared curvature at $S^{(i)}$. In order to guarantee connectivity, we limit the optimization region to a subset of $\Omega$, namely the inner pixel boundary of  $S^{(i)}$. We also use the notation $| S |$ to denote the cardinal of a digital set $S$.
 
+\subsection{Discrete variational model for discrete curve evolution}
+
+We start by definition the optimization variables.
 \begin{definition}[Inner pixel boundary]
-{
 Given a digital shape $S$ embedded in a domain $\Omega$, we define its inner pixel boundary set $O(S)$ as
 \begin{align*}
 	O(S) = \left\{ \: x \; | \; x \in S, |\mathcal{N}_4(x) \cap S|<4 \: \right\},
 \end{align*}
 where $\mathcal{N}_4(x)$ denotes the $4$-adjacent neighbor set of $x$ (without $x$).
-}
 \end{definition}
 
-In other words, each flow iteration decides which pixels in the inner boundary are to be removed and which are to be kept. To simplify notation, we denote the optimization region of $S^{(i)}$ as $O^{(i)}$, and the foreground set as $F^{(i)} = S^{(i)} \setminus O^{(i)}$. We recall the digital curvature estimator definition
-	
+In other words, each flow iteration decides which pixels in the inner boundary are to be removed and which are to be kept. To simplify notation, we denote the optimization region of $S^{(i)}$ as $O^{(i)}$, and the foreground set as $F^{(i)} = S^{(i)} \setminus O^{(i)}$. We recall the definition of our digital curvature estimator :
 \begin{align}
 	\hat{\kappa}^2(y) &= c_1\Big( c_2 - | B_r(y) \cap S | \Big)^2, 
 	\label{eq:curvature-estimator-pixels}
 \end{align}
-
 where $c_1=3/r^6$ and $c_2=\pi r^2/2$. 
 
-We define $O_{r}^{(i)}(y) = O^{(i)} \cap B_r(y)$ and an analogous definition holds for $F_{r}^{(i)}(y)$. Expanding \eqref{eq:curvature-estimator-pixels}, we get 
-
-	\begin{align*}
-		\hat{\kappa}^2(y) &= c_1\Big( c_2 - \sum_{x_j \in B_r(y)} \big( {x_j} + |F_{r}^{(i)}(y)| \big) \Big)^2 \\
-		\hat{\kappa}_{r}^2(y) &= c_1 \cdot \Big( C + 2\left( |F_{r}^{(i)}(y)| - c_2 \right) \sum_{x_j \in O_{r}^{(i)}(y)}{x_j} + \sum_{x_j \in O_{r}^{(i)}(y)}{x_j^2} + \sum_{ \substack{x_j,x_k \in O_{r}^{(i)}(p) \\ j<k} }{2x_jx_k}  \Big),
-	\end{align*}
-	
-	where $C=c_2^2 - 2c_2 \cdot |F_{r}^{(i)}(y)| + |F_{r}^{(i)}(y)|^2$. In order to be symmetric, the curvature at some linel $y$ is computed on $R_m(S)$. By ignoring constants and multiplication factors and using the binary character of the variables, we define the following family of energies for given parameters $\alpha,\beta \geq 0$.
-	
-	\begin{align}
-		E_m(X,S) =& \sum_{x \in X}{\alpha s(x)} \nonumber \\ 
-		& + \sum_{y \in R_m(S)}{ \beta \Big( { (1/2+ |F_{r}^{(i)}(y)|-c_2) \cdot \sum_{x_j \in O_{r}^{(i)}(y)}{x_j} } + \sum_{ \substack{x_j,x_k \in O_{r}^{(i)}(y) \\ j<k} }{x_jx_k} \Big) } \nonumber \\
-		& + \sum_{x \in X}{\gamma g(S,x)}
-		\label{eq:energy-family}
-	\end{align}
-	
-	where $g(S,x)$ denotes a similarity term as distance to initial shape $S$ or data fidelity term and $s(x)$ denotes a length penalization term. Each choice of $m$ generates a different flow, which is generaly described in the DCE algorithm \ref{alg:evolution-model}.
+We define $O_{r}^{(i)}(y) := O^{(i)} \cap B_r(y)$ and an analogous definition holds for $F_{r}^{(i)}(y)$. Expanding \eqref{eq:curvature-estimator-pixels}, we get 
+\begin{align*}
+  \hat{\kappa}^2(y) &= c_1\Big( c_2 - \sum_{x_j \in B_r(y)} \big( {x_j} + |F_{r}^{(i)}(y)| \big) \Big)^2 \\
+   &= c_1 \cdot \Big( C + 2\left( |F_{r}^{(i)}(y)| - c_2 \right) \hspace{-2mm}\sum_{x_j \in O_{r}^{(i)}(y)}\hspace{-2mm}{x_j} + \hspace{-2mm}\sum_{x_j \in O_{r}^{(i)}(y)}\hspace{-2mm}{x_j^2} + \hspace{-2mm}\sum_{ \substack{x_j,x_k \in O_{r}^{(i)}(p) \\ j<k} }\hspace{-2mm}{2x_jx_k}  \Big),
+\end{align*}
+where $C=c_2^2 - 2c_2 \cdot |F_{r}^{(i)}(y)| + |F_{r}^{(i)}(y)|^2$ is a constant. In
+order to be symmetric, the curvature at some linel $y$ is computed on
+$R_m(S)$.\todo{Que veux-tu dire?} By ignoring constants and multiplication factors and using
+the binary character of the variables, we define the following family
+of energies for given parameters $\alpha,\beta \geq 0$.
+\begin{align}
+  E_m(X,S) =& \sum_{x \in X}{\alpha s(x)} \nonumber \\ 
+  & + \sum_{y \in R_m(S)}{ \beta \Big( { (1/2+ |F_{r}^{(i)}(y)|-c_2) \cdot \sum_{x_j \in O_{r}^{(i)}(y)}{x_j} } + \sum_{ \substack{x_j,x_k \in O_{r}^{(i)}(y) \\ j<k} }{x_jx_k} \Big) } \nonumber \\
+  & + \sum_{x \in X}{\gamma g(S,x)}
+  \label{eq:energy-family}
+\end{align}
+\todo{Que vaux $X$ ici ?}	
+where $g(S,x)$ denotes a similarity term as distance to initial shape $S$ or data fidelity term and $s(x)$ denotes a length penalization term. Each choice of $m$ generates a different flow, which is generaly described in the Digital Curve Evolution (DCE) algorithm \ref{alg:evolution-model}.
 
 
 \begin{algorithm}[H]
@@ -642,22 +642,40 @@ We define $O_{r}^{(i)}(y) = O^{(i)} \cap B_r(y)$ and an analogous definition hol
 
 
 
-Recall that II estimates curvature by computing the difference between half of the estimation ball area and the intersection of such ball with the shape.  In particular, regions of positive curvature have fewer pixels in its intersection set than on its complement wrt the estimation ball. This implies that variables in such regions are labeled one, as the unbalance grows otherwise. We attenuate curvature if we shift the center of the estimation ball towards the interior of the shape, which means removing the labeled one pixels. That's why we take the complement of the optimization solution.
+Recall that the integral invariant estimator approaches curvature by
+computing the difference between half of the area of a chosen ball and
+the area of the intersection of this ball with the shape.  In
+particular, regions of positive curvature have fewer pixels in their
+intersection set than on its complement wrt the estimation ball. This
+implies that variables in such regions are labeled one, as the
+unbalance grows otherwise. We attenuate curvature if we shift the
+center of the estimation ball towards the interior of the shape, which
+means removing the labeled one pixels. That is why we take the
+complement of the optimization solution.
 
-The same reasoning applies for non-convex parts. Indeed, concave regions are convex in the shape complement. In the expasion mode we apply the same reasoning on the image complement, and by doing this we are able to handle concavities. It is called expansion mode because the optimization region, in this case, is the outer pixel boundary of the original shape. 
+The same reasoning applies for non-convex parts. Indeed, concave
+regions are convex in the shape complement. In the expansion mode we
+apply the same reasoning on the image complement, and by doing this we
+are able to handle concavities. It is called expansion mode because
+the optimization region, in this case, is the outer pixel boundary of
+the original shape. Table~\ref{tab:flow-summary} sums up these
+arguments.
 
-Length and similarity terms should be properly defined in order to comply with the complement step of the DCE algorithm. The length penalization is defined as
-
-	\begin{align}
-		s(x)=\sum_{x_j \in \mathcal{N}_4(x)}{ t(x_j) }, \quad \text{where } t(x_j) = \left\{\begin{array}{ll}
-		(x-x_j)^2, & \text{if } x_j \in O_{r}^{(i)}\\
-		(x-0), & \text{if } x_j \in F_{r}^{(i)}\\
-		(x-1), & \text{otherwise }
-		\end{array}\right.
-		\label{eq:length-penalization}
-	\end{align}
+Length and similarity terms should be properly defined in order to
+comply with the complement step of the DCE algorithm. The length
+penalization is defined as
+\begin{align}
+  s(x)=\sum_{x_j \in \mathcal{N}_4(x)}{ t(x_j) }, \quad \text{where } t(x_j) = \left\{\begin{array}{ll}
+  (x-x_j)^2, & \text{if } x_j \in O_{r}^{(i)}\\
+  (x-0), & \text{if } x_j \in F_{r}^{(i)}\\
+  (x-1), & \text{otherwise }
+  \end{array}\right.
+  \label{eq:length-penalization}
+\end{align}
 	
-	We do not use a similarity term in this section, thus we postpone the definition of such term until the description of how DCE can be used in a image segmentation framework.
+We do not use similarity terms in this section, thus we postpone the
+definition of such terms until the description of how DCE can be used
+in an image segmentation framework.
 
 
 
@@ -678,7 +696,13 @@ Length and similarity terms should be properly defined in order to comply with t
 \end{table}
 
 
-In figure \ref{fig:m1-square-flow} we see some results for the DCE algorithm  with $m=1$. We observe a global movement towards roundness, but with several artifacts. We minimize the effects of a jaggy boundary by setting $\alpha > 0$. Nonetheless, a higher estimation ball radius creates unstable shapes. In fact, the estimator is very sensitive in regions of low squared curvature, and its precisely in those regions which spurious pixels are included.
+In figure \ref{fig:m1-square-flow} we see some results for the DCE
+algorithm with $m=1$. We observe a global movement towards roundness,
+but with several artifacts. We minimize the effects of a jaggy
+boundary by setting $\alpha > 0$. Nonetheless, a higher estimation
+ball radius creates unstable shapes. In fact, the estimator is very
+sensitive in regions of low squared curvature, and it is precisely in
+those regions that spurious pixels are created. 
 
 
 \begin{figure}[!ht]
@@ -698,16 +722,20 @@ In figure \ref{fig:m1-square-flow} we see some results for the DCE algorithm  wi
 	\includegraphics[scale=0.2]{images/flow/length-radius-effect/triangle-r5/summary_flow.eps}
 	}%
 \end{minipage}%
-\caption{The algorithm is very sensitive to the variations of the estimator, which are particularly important in regions of low squared curvature. Artifacts are reduced with a length penalization but increases if we use a higher ball radius. }
+\caption{The algorithm is very sensitive to the little variations of the estimator, which are particularly important in regions of low squared curvature. Artifacts are somewhat reduced with a length penalization but increases if we use a higher ball radius. }
 \label{fig:m1-square-flow}
 \end{figure}
 
 
-\subsection{A more stable model}
+\subsection{A more stable model.}
+In the previous section we noticed that the algorithm produces shapes
+with many artifacts due to the small uncertainties of the estimator
+along regions of low squared curvature. We argue that, evaluating the
+estimation ball along farther ring sets we avoid those sensitive areas
+by focusing the optimization process only on regions with highest
+squared curvature value. 
 
-In the previous section we notice that the algorithm produces shapes with many artifacts due to the sensitiveness of the estimator on regions of low squared curvature. We argue that, evaluating the estimation ball along farther ring sets we skip those sensitive areas by focusing the optimization process only on those regions of highest squared curvature value. 
-
-\jaco{Motivation in digital geometry of why it makes sense to compute things farther.}
+%%\jaco{Motivation in digital geometry of why it makes sense to compute things farther.}
 
 
 
@@ -729,11 +757,16 @@ In the previous section we notice that the algorithm produces shapes with many a
 	\includegraphics[scale=0.2]{images/flow/farther-rings/square-r5-l3/summary_flow.eps}
 	}%
 \end{minipage}%
-\label{fig:mx-square-flow}
-\caption{By positioning the estimation ball on farther rings, we minimize artifacts creation. }
+\caption{By positioning the estimation ball on farther rings, we minimize artifacts creation. \label{fig:mx-square-flow}}
 \end{figure}
 
-In our experiments, the best results are obtained by executing DCE algorithm with $m=r$, where $r$ is the estimation ball radius (see figures \ref{fig:mx-square-flow}, \ref{fig:mx-flow-gs-radius-effect} ). In plot \ref{fig:mx-elastica-plots}, we observe how the elastica evolves along the iterations. If the radius is too large, the elastica increases starting from a critical point $p$. That's what happens for the triangle, in which the flow converges to a single point. 
+In our experiments, the best results are obtained by executing DCE
+algorithm with $m$ equal to $r$, where $r$ is the estimation ball
+radius (see figures \ref{fig:mx-square-flow},
+\ref{fig:mx-flow-gs-radius-effect} ). In plot
+\ref{fig:mx-elastica-plots}, we observe how the elastica energy evolves along
+the iterations. If the radius is too large, the elastica energy may increase after some steps. That is what happens for the
+triangle, in which the flow converges to a single point.
 
 
 \begin{figure}[!ht]
@@ -770,7 +803,7 @@ In our experiments, the best results are obtained by executing DCE algorithm wit
 \begin{figure}[!ht]
 \center
 \includegraphics[scale=0.5]{images/flow/elastica-energy-plot/r5h05.eps}
-\caption{Elastica computation along the iterations for different shapes. If radius is too large, elastica may increase after a certain number of iterations. }
+\caption{Elastica computation along the iterations for different shapes. If radius is too large, elastica energy may increase after a certain number of iterations. }
 \label{fig:mx-elastica-plots}
 \end{figure}
 
@@ -790,29 +823,41 @@ In our experiments, the best results are obtained by executing DCE algorithm wit
 Let $f$ be a function of $n$ binary variables with unary and pairwise terms, i.e.
 
 \begin{align*}
-f(y_1,\cdots, y_n) = \sum_{j}{f_j(y_j)} + \sum_{j < k}{f_{j,k}(y_j,y_k)}
+f(y_1,\cdots, y_n) = \sum_{j}{f_j(y_j)} + \sum_{j < k}{f_{j,k}(y_j,y_k)}.
 \end{align*}
 
-Function $f$ is submodular if and only if the following inequality holds for each pairwise term $f_{j,k}$ \cite{kolmogorov04whatenergies}
-
+Function $f$ is submodular if and only if the following inequality holds for each pairwise term $f_{j,k}$ \cite{kolmogorov04whatenergies}:
 \begin{align*}
-	\quad f_{j,k}(0,0) + f_{j,k}(1,1) \leq f_{j,k}(0,1) + f_{j,k}(1,0)
+  \quad f_{j,k}(0,0) + f_{j,k}(1,1) \leq f_{j,k}(0,1) + f_{j,k}(1,0).
 \end{align*}
 
-Energy $E_m$ is non-submodular and optimizing it is a difficult problem, which
-constrained us to use heuristics and approximation algorithms. The QPBO method \cite{rother07qpbo} transforms the 
-original problem in a max-flow/min-cut formulation and returns a full optimal labeling for submodular energies. For
-non-submodular energies the method is guaranteed to return a partial labeling with the property that the set of labeled
-variables is part of an optimal solution. That property is called partial optimality.
+Energy $E_m$ is non-submodular and optimizing it is a difficult
+problem, which constrains us to use heuristics and approximation
+algorithms. The QPBO method \cite{rother07qpbo} transforms the
+original problem in a max-flow/min-cut formulation and returns a full
+optimal labeling for submodular energies. For non-submodular energies
+the method is guaranteed to return a partial labeling with the
+property that the set of labeled variables is part of an optimal
+solution. That property is called partial optimality.
 
-In practice, QPBO can leave many pixels unlabeled. There exist two extensions of QPBO that ameliorate this limitation: QPBOI
-(improve) and QPBOP (probe). The first is an approximation method that is guaranteed to not increase the energy, but we
-lost the property of partial optimality. The second is an exact method which is reported to label more variables than
-QPBO. 
+In practice, QPBO can leave many pixels unlabeled. There exist two
+extensions of QPBO that alleviate this limitation: QPBOI (improve) and
+QPBOP (probe). The first is an approximation method that is guaranteed
+to not increase the energy, but we lost the property of partial
+optimality. The second is an exact method which is reported to label
+more variables than QPBO.
 
-The percentage of unlabeled pixels by QPBOP for $E_1$ is quite high, but the percentage decreases to zero as we set $m$ equal to $r$. Therefore, we are more confident to take the solution for values of $m$ close to $r$. However, the manner which it varies across $m$ values differs from shape to shape, as it's illustrated in figure \ref{fig:unlabeled-versus-iterations}. 
+The percentage of unlabeled pixels by QPBOP for $E_1$ is quite high,
+but the percentage decreases to zero as we set $m$ equal to
+$r$. Therefore, we are more confident to take the solution for values
+of $m$ close to $r$. However, the way it varies across $m$ values
+differs from shape to shape, as is illustrated in figure
+\ref{fig:unlabeled-versus-iterations}. We also noticed that, for
+$m=r$, all the pixels were labeled. Perhaps this means that our energy
+is submodular in this case, but this remains to be proved.
 
-We have used QPBOI to solve $E_m$. Naturally, in the case that all pixels are labeled by QPBOP, QPBOI returns the same labeling as QPBOP. 
+We have used QPBOI to solve $E_m$. Naturally, in the case where all
+pixels are labeled by QPBOP, QPBOI returns the same labeling as QPBOP.
 
 
 \begin{figure}[!htp]
@@ -834,10 +879,10 @@ We have used QPBOI to solve $E_m$. Naturally, in the case that all pixels are la
 \begin{figure}
 \center
 \includegraphics[scale=0.5]{images/optimization/pairwise-ratio/plot-pairwiseratio-lowerHigher-concavities-probe.eps}
-\caption{We plot the ratio of pairwise terms among all $\binom{|X^{(i)}|}{2}$ combinations. The highest ring has rougly half the number of pairwise terms  than the lowest ring.}
+\caption{We plot the ratio of pairwise terms among all $\binom{|X^{(i)}|}{2}$ combinations. The highest ring has rougly half the number of pairwise terms  than the lowest ring.\label{fig:ratio-pairwise-terms}}
 \end{figure}
 
-
+\todo{You must comment figure~\ref{fig:ratio-pairwise-terms} in the text.}
 
 \section{Application in image segmentation}
 
